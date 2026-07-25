@@ -291,5 +291,337 @@
     "eyebrow": "قريبًا",
     "title": "هذا القسم متاح قريبًا",
     "description": "هذه الصفحة مخطط لها في إصدار قادم من NOKI Operations. الإجراءات المقابلة موجودة بالفعل في NOKI API وسيتم ربطها بهذه الواجهة."
+  },
+  "picking": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "الالتقاط",
+      "description": "طابور حقيقي لتولي مهام الالتقاط وبدئها وإنهائها.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "الالتقاط",
+      "statusFilterLabel": "تصفية حسب حالة الالتقاط"
+    },
+    "table": {
+      "ariaLabel": "طابور الالتقاط"
+    },
+    "columns": {
+      "order": "الطلب",
+      "warehouse": "المستودع",
+      "assignee": "المشغل",
+      "status": "الحالة",
+      "lines": "السطور",
+      "age": "العمر",
+      "actions": "الإجراءات"
+    },
+    "age": {
+      "notStarted": "لم يبدأ",
+      "hoursAgo": "منذ {count} ساعة"
+    },
+    "actions": {
+      "view": "عرض",
+      "assign": "إسناد",
+      "startPicking": "بدء الالتقاط",
+      "completePicking": "إنهاء الالتقاط"
+    },
+    "empty": {
+      "title": "لا توجد مهمة التقاط",
+      "description": "لا توجد مهمة تطابق هذه الحالة."
+    },
+    "unassigned": "غير مسندة",
+    "status": {
+      "OPEN": "مفتوحة",
+      "ASSIGNED": "مسندة",
+      "PICKING": "قيد الالتقاط",
+      "PACKED": "معبأة",
+      "QC_PENDING": "بانتظار الفحص",
+      "QC_FAILED": "فشل الفحص",
+      "QC_PASSED": "اجتازت الفحص",
+      "READY_FOR_DISPATCH": "جاهزة للإرسال",
+      "CANCELLED": "ملغاة"
+    },
+    "detail": {
+      "sections": {
+        "summary": "ملخص",
+        "actions": "إجراءات",
+        "lines": "السطور للتأكيد"
+      },
+      "taskId": "المهمة",
+      "orderStatus": "حالة الطلب",
+      "assignedActorId": "مسندة إلى",
+      "pickingStartedAt": "بدأ الالتقاط في",
+      "pickingCompletedAt": "انتهى الالتقاط في",
+      "assignInputLabel": "معرف المشغل",
+      "assignInputPlaceholder": "UUID للممثل المراد إسناده",
+      "linesNote": "الكميات تأتي من سطور الحجز الحقيقية.",
+      "lines": {
+        "product": "المنتج",
+        "variant": "المتغير",
+        "quantity": "الكمية"
+      }
+    }
+  },
+  "packing": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "التعبئة",
+      "description": "مهام الالتقاط الجارية أو المكتملة، جاهزة للتعبئة بعد تأكيد الكميات.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "التعبئة"
+    },
+    "table": {
+      "ariaLabel": "طابور التعبئة"
+    },
+    "columns": {
+      "order": "الطلب",
+      "warehouse": "المستودع",
+      "assignee": "المشغل",
+      "status": "الحالة",
+      "lines": "السطور",
+      "age": "العمر",
+      "actions": "الإجراءات"
+    },
+    "age": {
+      "hoursAgo": "منذ {count} ساعة"
+    },
+    "actions": {
+      "view": "عرض",
+      "completePacking": "إنهاء التعبئة"
+    },
+    "empty": {
+      "title": "لا توجد مهمة تعبئة",
+      "description": "لا توجد مهمة جاهزة للتعبئة."
+    },
+    "unassigned": "غير مسندة",
+    "status": {
+      "OPEN": "مفتوحة",
+      "ASSIGNED": "مسندة",
+      "PICKING": "قيد الالتقاط",
+      "PACKED": "معبأة",
+      "QC_PENDING": "بانتظار الفحص",
+      "QC_FAILED": "فشل الفحص",
+      "QC_PASSED": "اجتازت الفحص",
+      "READY_FOR_DISPATCH": "جاهزة للإرسال",
+      "CANCELLED": "ملغاة"
+    },
+    "detail": {
+      "sections": {
+        "summary": "ملخص",
+        "actions": "بيانات الطرد والإجراء",
+        "lines": "السطور المعبأة"
+      },
+      "taskId": "المهمة",
+      "orderStatus": "حالة الطلب",
+      "pickingStartedAt": "بدأ الالتقاط في",
+      "pickingCompletedAt": "انتهى الالتقاط في",
+      "notReadyTitle": "الالتقاط غير مكتمل",
+      "notReadyDescription": "التعبئة محجوبة حتى يؤكد API انتهاء الالتقاط.",
+      "linesNote": "السطور من حجز المخزون المؤكد من API؛ يتم حفظ عدد الطرود والوزن والملاحظات عند إنهاء التعبئة.",
+      "packedAt": "عُبئت في",
+      "packageCount": "عدد الطرود",
+      "packageCountPlaceholder": "مثال: 3",
+      "weightKg": "الوزن الإجمالي (كغ)",
+      "weightKgPlaceholder": "مثال: 12.5",
+      "notesLabel": "ملاحظات التعبئة",
+      "notesPlaceholder": "قابل للكسر، صندوق مزدوج…",
+      "lines": {
+        "product": "المنتج",
+        "variant": "المتغير",
+        "quantity": "الكمية"
+      }
+    }
+  },
+  "qc": {
+    "list": {
+      "eyebrow": "الجودة",
+      "title": "مراقبة الجودة",
+      "description": "طابور PACKED / QC_PENDING / QC_FAILED قبل الشحن.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "مراقبة الجودة",
+      "statusFilterLabel": "تصفية حسب حالة QC"
+    },
+    "table": {
+      "ariaLabel": "طابور مراقبة الجودة"
+    },
+    "columns": {
+      "order": "الطلب",
+      "warehouse": "المستودع",
+      "status": "الحالة",
+      "lines": "السطور",
+      "packedAt": "تمت التعبئة في",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "view": "عرض",
+      "submitPass": "اعتماد QC",
+      "submitFail": "رفض QC"
+    },
+    "empty": {
+      "title": "لا توجد مهمة QC",
+      "description": "لا توجد مهمة تطابق حالة QC هذه."
+    },
+    "status": {
+      "OPEN": "مفتوحة",
+      "ASSIGNED": "مسندة",
+      "PICKING": "قيد الالتقاط",
+      "PACKED": "معبأة",
+      "QC_PENDING": "بانتظار الفحص",
+      "QC_FAILED": "فشل الفحص",
+      "QC_PASSED": "اجتازت الفحص",
+      "READY_FOR_DISPATCH": "جاهزة للإرسال",
+      "CANCELLED": "ملغاة"
+    },
+    "detail": {
+      "sections": {
+        "summary": "ملخص",
+        "check": "قرار QC",
+        "lines": "السطور المفحوصة"
+      },
+      "taskId": "المهمة",
+      "orderStatus": "حالة الطلب",
+      "statusLegend": "نتيجة الفحص",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "reasonLabel": "سبب الرفض",
+      "reasonPlaceholder": "صف العيب الملاحظ",
+      "reasonRequired": "السبب مطلوب عند FAIL.",
+      "notesLabel": "ملاحظات",
+      "notesPlaceholder": "ملاحظات داخلية اختيارية",
+      "linesNote": "FAIL يمنع المهمة من الشحن؛ PASS يسمح بالخطوة التالية.",
+      "lines": {
+        "product": "المنتج",
+        "variant": "المتغير",
+        "quantity": "الكمية"
+      }
+    }
+  },
+  "shipping": {
+    "list": {
+      "eyebrow": "الشحن",
+      "title": "أوامر الشحن",
+      "description": "قائمة DeliveryShipment الحقيقية مع البائع والمستودع والوجهة وCOD والسائق وQC.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "الشحن",
+      "statusFilterLabel": "تصفية حسب حالة التسليم"
+    },
+    "table": {
+      "ariaLabel": "قائمة الشحنات"
+    },
+    "columns": {
+      "order": "الطلب",
+      "warehouse": "المستودع",
+      "status": "الحالة",
+      "driver": "السائق",
+      "country": "البلد",
+      "cod": "COD",
+      "qc": "QC",
+      "attempts": "المحاولات",
+      "incidents": "الحوادث",
+      "updatedAt": "آخر تحديث",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "view": "عرض"
+    },
+    "empty": {
+      "title": "لا توجد شحنة",
+      "description": "لا توجد DeliveryShipment تطابق هذه المرشحات."
+    },
+    "unassigned": "غير مسند",
+    "status": {
+      "ALL": "الكل",
+      "READY_FOR_DISPATCH": "جاهزة للإرسال",
+      "ASSIGNED": "مسندة",
+      "OUT_FOR_DELIVERY": "قيد التسليم",
+      "DELIVERED": "تم التسليم",
+      "FAILED": "فشلت",
+      "CANCELLED": "ملغاة"
+    },
+    "qcStatus": {
+      "PENDING": "قيد الانتظار",
+      "PASSED": "ناجح",
+      "FAILED": "فاشل"
+    },
+    "fulfillmentStatus": {
+      "OPEN": "مفتوحة",
+      "ASSIGNED": "مسندة",
+      "PICKING": "قيد الالتقاط",
+      "PACKED": "معبأة",
+      "QC_PENDING": "بانتظار الفحص",
+      "QC_FAILED": "فشل الفحص",
+      "QC_PASSED": "اجتازت الفحص",
+      "READY_FOR_DISPATCH": "جاهزة للإرسال",
+      "CANCELLED": "ملغاة"
+    },
+    "detail": {
+      "sections": {
+        "summary": "تفاصيل الشحنة"
+      },
+      "organization": "البائع / المؤسسة",
+      "destination": "الوجهة",
+      "driverPhone": "هاتف السائق",
+      "codCollected": "COD المحصل",
+      "codStatus": "حالة COD",
+      "fulfillmentStatus": "حالة التجهيز",
+      "fulfillmentTaskId": "مهمة التجهيز",
+      "evidenceCount": "الأدلة",
+      "pickupLocation": "موقع الاستلام",
+      "lastPosition": "آخر موقع معروف",
+      "lastPositionAt": "وقت تسجيل الموقع",
+      "assignedAt": "أسندت في",
+      "outForDeliveryAt": "خرجت للتسليم في",
+      "deliveredAt": "تم التسليم في",
+      "failedAt": "فشلت في",
+      "updatedAt": "آخر تحديث في"
+    }
+  },
+  "incidents": {
+    "list": {
+      "eyebrow": "الحوادث",
+      "title": "الحوادث التشغيلية",
+      "description": "حوادث التسليم الحقيقية مع الحالة والمصدر والشدة والحل حسب الصلاحيات المتاحة.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "الحوادث",
+      "statusFilterLabel": "تصفية حسب حالة الحادث"
+    },
+    "table": {
+      "ariaLabel": "قائمة الحوادث التشغيلية"
+    },
+    "columns": {
+      "order": "الطلب",
+      "type": "المصدر",
+      "status": "الحالة",
+      "country": "البلد",
+      "reportedBy": "أبلغ بواسطة",
+      "createdAt": "أنشئ في",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "view": "تفاصيل"
+    },
+    "empty": {
+      "title": "لا توجد حوادث",
+      "description": "لا يوجد حادث يطابق هذه المرشحات."
+    },
+    "status": {
+      "ALL": "الكل",
+      "OPEN": "مفتوح",
+      "RESOLVED": "محلول"
+    },
+    "type": {
+      "DELAY": "تأخير",
+      "VEHICLE_ISSUE": "مشكلة مركبة",
+      "SAFETY": "سلامة",
+      "OTHER": "أخرى"
+    },
+    "detail": {
+      "title": "تفاصيل الحادث",
+      "reportedBy": "أبلغ بواسطة",
+      "comment": "تعليق",
+      "noComment": "لا يوجد تعليق",
+      "location": "الموقع",
+      "createdAt": "أنشئ في",
+      "resolvedBy": "حل بواسطة",
+      "resolvedAt": "حل في"
+    }
   }
 }

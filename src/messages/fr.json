@@ -291,5 +291,337 @@
     "eyebrow": "Bientôt disponible",
     "title": "Cette section arrive bientôt",
     "description": "Cette page est planifiée dans une prochaine itération de NOKI Operations. Les actions correspondantes existent déjà côté NOKI API et seront reliées à cette interface."
+  },
+  "picking": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Picking",
+      "description": "File réelle des tâches à prendre en charge, démarrer et terminer.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Picking",
+      "statusFilterLabel": "Filtrer par statut de picking"
+    },
+    "table": {
+      "ariaLabel": "File de picking"
+    },
+    "columns": {
+      "order": "Commande",
+      "warehouse": "Entrepôt",
+      "assignee": "Opérateur",
+      "status": "Statut",
+      "lines": "Lignes",
+      "age": "Ancienneté",
+      "actions": "Actions"
+    },
+    "age": {
+      "notStarted": "Non démarré",
+      "hoursAgo": "Depuis {count} h"
+    },
+    "actions": {
+      "view": "Voir",
+      "assign": "Prendre en charge",
+      "startPicking": "Démarrer le picking",
+      "completePicking": "Terminer le picking"
+    },
+    "empty": {
+      "title": "Aucune tâche de picking",
+      "description": "Aucune tâche ne correspond à ce statut."
+    },
+    "unassigned": "Non assignée",
+    "status": {
+      "OPEN": "Ouverte",
+      "ASSIGNED": "Assignée",
+      "PICKING": "Picking en cours",
+      "PACKED": "Emballée",
+      "QC_PENDING": "QC en attente",
+      "QC_FAILED": "QC échoué",
+      "QC_PASSED": "QC validé",
+      "READY_FOR_DISPATCH": "Prête à expédier",
+      "CANCELLED": "Annulée"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Résumé",
+        "actions": "Actions",
+        "lines": "Lignes à confirmer"
+      },
+      "taskId": "Tâche",
+      "orderStatus": "Statut commande",
+      "assignedActorId": "Assignée à",
+      "pickingStartedAt": "Picking démarré le",
+      "pickingCompletedAt": "Picking terminé le",
+      "assignInputLabel": "ID opérateur",
+      "assignInputPlaceholder": "UUID de l'acteur à assigner",
+      "linesNote": "Les quantités proviennent des lignes de réservation réelles.",
+      "lines": {
+        "product": "Produit",
+        "variant": "Variante",
+        "quantity": "Quantité"
+      }
+    }
+  },
+  "packing": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Packing",
+      "description": "Tâches dont le picking est en cours ou terminé, prêtes à emballer dès que les quantités sont confirmées.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Packing"
+    },
+    "table": {
+      "ariaLabel": "File de packing"
+    },
+    "columns": {
+      "order": "Commande",
+      "warehouse": "Entrepôt",
+      "assignee": "Opérateur",
+      "status": "Statut",
+      "lines": "Lignes",
+      "age": "Ancienneté",
+      "actions": "Actions"
+    },
+    "age": {
+      "hoursAgo": "Depuis {count} h"
+    },
+    "actions": {
+      "view": "Voir",
+      "completePacking": "Terminer le packing"
+    },
+    "empty": {
+      "title": "Aucune tâche de packing",
+      "description": "Aucune tâche prête pour le packing."
+    },
+    "unassigned": "Non assignée",
+    "status": {
+      "OPEN": "Ouverte",
+      "ASSIGNED": "Assignée",
+      "PICKING": "Picking en cours",
+      "PACKED": "Emballée",
+      "QC_PENDING": "QC en attente",
+      "QC_FAILED": "QC échoué",
+      "QC_PASSED": "QC validé",
+      "READY_FOR_DISPATCH": "Prête à expédier",
+      "CANCELLED": "Annulée"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Résumé",
+        "actions": "Données colis et action",
+        "lines": "Lignes emballées"
+      },
+      "taskId": "Tâche",
+      "orderStatus": "Statut commande",
+      "pickingStartedAt": "Picking démarré le",
+      "pickingCompletedAt": "Picking terminé le",
+      "notReadyTitle": "Picking non terminé",
+      "notReadyDescription": "Le packing est bloqué tant que la fin de picking n'est pas confirmée par l'API.",
+      "linesNote": "Lignes issues de la réservation d'inventaire confirmée par l'API; colis, poids et notes sont persistés à la clôture du packing.",
+      "packedAt": "Emballée le",
+      "packageCount": "Nombre de colis",
+      "packageCountPlaceholder": "Ex. 3",
+      "weightKg": "Poids total (kg)",
+      "weightKgPlaceholder": "Ex. 12.5",
+      "notesLabel": "Notes de packing",
+      "notesPlaceholder": "Fragile, double carton…",
+      "lines": {
+        "product": "Produit",
+        "variant": "Variante",
+        "quantity": "Quantité"
+      }
+    }
+  },
+  "qc": {
+    "list": {
+      "eyebrow": "Qualité",
+      "title": "Contrôle qualité",
+      "description": "File PACKED / QC_PENDING / QC_FAILED avant expédition.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Contrôle qualité",
+      "statusFilterLabel": "Filtrer par statut QC"
+    },
+    "table": {
+      "ariaLabel": "File de contrôle qualité"
+    },
+    "columns": {
+      "order": "Commande",
+      "warehouse": "Entrepôt",
+      "status": "Statut",
+      "lines": "Lignes",
+      "packedAt": "Emballée le",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Voir",
+      "submitPass": "Valider QC",
+      "submitFail": "Refuser QC"
+    },
+    "empty": {
+      "title": "Aucune tâche QC",
+      "description": "Aucune tâche ne correspond à ce statut QC."
+    },
+    "status": {
+      "OPEN": "Ouverte",
+      "ASSIGNED": "Assignée",
+      "PICKING": "Picking en cours",
+      "PACKED": "Emballée",
+      "QC_PENDING": "QC en attente",
+      "QC_FAILED": "QC échoué",
+      "QC_PASSED": "QC validé",
+      "READY_FOR_DISPATCH": "Prête à expédier",
+      "CANCELLED": "Annulée"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Résumé",
+        "check": "Décision QC",
+        "lines": "Lignes contrôlées"
+      },
+      "taskId": "Tâche",
+      "orderStatus": "Statut commande",
+      "statusLegend": "Résultat du contrôle",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "reasonLabel": "Motif du refus",
+      "reasonPlaceholder": "Décrivez le défaut constaté",
+      "reasonRequired": "Le motif est obligatoire pour un FAIL.",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Notes internes facultatives",
+      "linesNote": "FAIL garde la tâche hors Shipping; PASS la rend éligible à la suite.",
+      "lines": {
+        "product": "Produit",
+        "variant": "Variante",
+        "quantity": "Quantité"
+      }
+    }
+  },
+  "shipping": {
+    "list": {
+      "eyebrow": "Expédition",
+      "title": "Shipping Orders",
+      "description": "Liste réelle des DeliveryShipment commerce avec vendeur, entrepôt, destination, COD, conducteur et QC.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Shipping",
+      "statusFilterLabel": "Filtrer par statut livraison"
+    },
+    "table": {
+      "ariaLabel": "Liste des expéditions"
+    },
+    "columns": {
+      "order": "Commande",
+      "warehouse": "Entrepôt",
+      "status": "Statut",
+      "driver": "Conducteur",
+      "country": "Pays",
+      "cod": "COD",
+      "qc": "QC",
+      "attempts": "Tentatives",
+      "incidents": "Incidents",
+      "updatedAt": "Mis à jour",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Voir"
+    },
+    "empty": {
+      "title": "Aucune expédition",
+      "description": "Aucun DeliveryShipment ne correspond à ces critères."
+    },
+    "unassigned": "Non assigné",
+    "status": {
+      "ALL": "Tous",
+      "READY_FOR_DISPATCH": "Prête à expédier",
+      "ASSIGNED": "Assignée",
+      "OUT_FOR_DELIVERY": "En livraison",
+      "DELIVERED": "Livrée",
+      "FAILED": "Échouée",
+      "CANCELLED": "Annulée"
+    },
+    "qcStatus": {
+      "PENDING": "En attente",
+      "PASSED": "Validé",
+      "FAILED": "Échoué"
+    },
+    "fulfillmentStatus": {
+      "OPEN": "Ouverte",
+      "ASSIGNED": "Assignée",
+      "PICKING": "Picking en cours",
+      "PACKED": "Emballée",
+      "QC_PENDING": "QC en attente",
+      "QC_FAILED": "QC échoué",
+      "QC_PASSED": "QC validé",
+      "READY_FOR_DISPATCH": "Prête à expédier",
+      "CANCELLED": "Annulée"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Détail livraison"
+      },
+      "organization": "Vendeur / organisation",
+      "destination": "Destination",
+      "driverPhone": "Téléphone conducteur",
+      "codCollected": "COD collecté",
+      "codStatus": "Statut COD",
+      "fulfillmentStatus": "Statut fulfillment",
+      "fulfillmentTaskId": "Tâche fulfillment",
+      "evidenceCount": "Preuves",
+      "pickupLocation": "Position pickup",
+      "lastPosition": "Dernière position connue",
+      "lastPositionAt": "Position relevée le",
+      "assignedAt": "Assignée le",
+      "outForDeliveryAt": "Sortie le",
+      "deliveredAt": "Livrée le",
+      "failedAt": "Échec le",
+      "updatedAt": "Mis à jour le"
+    }
+  },
+  "incidents": {
+    "list": {
+      "eyebrow": "Incidents",
+      "title": "Incidents opérationnels",
+      "description": "Liste réelle des incidents de livraison, avec statut, source, sévérité et résolution selon les droits disponibles.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Incidents",
+      "statusFilterLabel": "Filtrer par statut incident"
+    },
+    "table": {
+      "ariaLabel": "Liste des incidents opérationnels"
+    },
+    "columns": {
+      "order": "Commande",
+      "type": "Source",
+      "status": "Statut",
+      "country": "Pays",
+      "reportedBy": "Signalé par",
+      "createdAt": "Créé le",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Détail"
+    },
+    "empty": {
+      "title": "Aucun incident",
+      "description": "Aucun incident ne correspond à ces critères."
+    },
+    "status": {
+      "ALL": "Tous",
+      "OPEN": "Ouvert",
+      "RESOLVED": "Résolu"
+    },
+    "type": {
+      "DELAY": "Retard",
+      "VEHICLE_ISSUE": "Problème véhicule",
+      "SAFETY": "Sécurité",
+      "OTHER": "Autre"
+    },
+    "detail": {
+      "title": "Détail incident",
+      "reportedBy": "Signalé par",
+      "comment": "Commentaire",
+      "noComment": "Aucun commentaire",
+      "location": "Position",
+      "createdAt": "Créé le",
+      "resolvedBy": "Résolu par",
+      "resolvedAt": "Résolu le"
+    }
   }
 }

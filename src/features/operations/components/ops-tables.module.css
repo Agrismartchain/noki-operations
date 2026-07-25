@@ -36,6 +36,13 @@
   outline-offset: 2px;
 }
 
+.rowActionButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
 .container {
   display: flex;
   flex-direction: column;

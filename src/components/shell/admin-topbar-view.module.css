@@ -2,6 +2,8 @@
   display: flex;
   align-items: center;
   gap: var(--noki-space-2);
+  max-inline-size: 16rem;
+  min-inline-size: 0;
 }
 
 .initials {
@@ -19,8 +21,16 @@
 
 .identityText {
   display: flex;
+  min-inline-size: 0;
   flex-direction: column;
   line-height: 1.2;
+}
+
+.displayName,
+.email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .displayName {
@@ -32,4 +42,19 @@
 .email {
   font-size: var(--noki-font-size-xs);
   color: var(--noki-color-semantic-text-secondary);
+}
+
+@media (max-width: 767px) {
+  .identity {
+    max-inline-size: 2rem;
+  }
+
+  .identityText {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
 }

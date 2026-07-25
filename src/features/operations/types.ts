@@ -46,6 +46,19 @@ export type FulfillmentTaskStatus = (typeof FULFILLMENT_TASK_STATUSES)[number];
 export const INCIDENT_STATUSES = ["OPEN", "RESOLVED"] as const;
 export type IncidentStatus = (typeof INCIDENT_STATUSES)[number];
 
+export const INCIDENT_TYPES = ["DELAY", "VEHICLE_ISSUE", "SAFETY", "OTHER"] as const;
+export type IncidentType = (typeof INCIDENT_TYPES)[number];
+
+export const DELIVERY_SHIPMENT_STATUSES = [
+  "READY_FOR_DISPATCH",
+  "ASSIGNED",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "FAILED",
+  "CANCELLED",
+] as const;
+export type DeliveryShipmentStatus = (typeof DELIVERY_SHIPMENT_STATUSES)[number];
+
 export interface InboundLine {
   id: string;
   productId: string;
@@ -257,16 +270,141 @@ export interface DeliveryIncidentRecord {
   countryCode: string;
   shipmentId: string;
   orderNumber: string;
-  type: string;
+  type: IncidentType;
   status: IncidentStatus;
   comment: string | null;
   actorId: string;
   actorDisplayName: string;
+  latitude: number | null;
+  longitude: number | null;
+  accuracyMeters: number | null;
   resolvedByActorId: string | null;
   resolvedByActorDisplayName: string | null;
   resolvedAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * GET /v1/admin/delivery/shipments (AdminDeliveryShipmentDto). Read-only for
+ * OPERATIONS -- no assign/update permission is granted to this role, so no
+ * mutation input type exists here by design.
+ */
+export interface DeliveryShipmentRecord {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  countryId: string;
+  countryCode: string;
+  orderId: string | null;
+  orderNumber: string;
+  fulfillmentTaskId: string | null;
+  assignedDriverProfileId: string | null;
+  assignedDriverDisplayName: string | null;
+  status: DeliveryShipmentStatus;
+  attemptsCount: number;
+  incidentsCount: number;
+  evidenceCount: number;
+  pickupLatitude: number | null;
+  pickupLongitude: number | null;
+  assignedAt: string | null;
+  outForDeliveryAt: string | null;
+  deliveredAt: string | null;
+  failedAt: string | null;
+  updatedAt: string;
+}
+
+/**
+ * GET /v1/admin/commerce/shipping returns Commerce shipping rows backed by
+ * DeliveryShipment with operational context that the narrower
+ * /admin/delivery/shipments DTO does not expose.
+ */
+export interface CommerceShippingRecord {
+  id: string;
+  organizationId: string;
+  countryId: string;
+  countryCode: string;
+  orderId: string | null;
+  orderNumber: string | null;
+  sellerId: string | null;
+  sellerName: string | null;
+  warehouseId: string | null;
+  warehouseName: string | null;
+  customerName: string | null;
+  customerPhone: string | null;
+  destination: string | null;
+  driverId: string | null;
+  driverName: string | null;
+  driverPhoneMasked: string | null;
+  codAmount: string;
+  codCollected: string | null;
+  codStatus: string | null;
+  currencyCode: string | null;
+  fulfillmentStatus: FulfillmentTaskStatus | null;
+  qcStatus: "PENDING" | "PASSED" | "FAILED" | null;
+  shipmentStatus: DeliveryShipmentStatus;
+  lastLatitude: number | null;
+  lastLongitude: number | null;
+  lastPositionAt: string | null;
+  assignedAt: string | null;
+  outForDeliveryAt: string | null;
+  deliveredAt: string | null;
+  failedAt: string | null;
+  updatedAt: string;
+}
+
+/**
+ * GET /fulfillment/tasks/{id} (FulfillmentController.getTask ->
+ * FulfillmentTaskResponseDto). The generated OpenAPI type for `status` is
+ * narrower (missing QC statuses and READY_FOR_DISPATCH) than the real Prisma enum --
+ * verified against fulfillment-task.service.ts's `toTaskResponse`, which
+ * passes the raw Prisma status straight through -- so this local type uses
+ * the full FulfillmentTaskStatus union to match actual runtime values.
+ * No product/variant display names are available from this endpoint, only
+ * raw UUIDs -- do not invent enrichment that doesn't exist server-side.
+ */
+export interface FulfillmentTaskLine {
+  id: string;
+  taskId: string;
+  reservationLineId: string;
+  orderLineId: string;
+  productId: string;
+  variantId: string;
+  quantity: number;
+  createdAt: string;
+}
+
+export interface FulfillmentTaskDetail {
+  id: string;
+  organizationId: string;
+  countryId: string;
+  warehouseId: string;
+  inventoryReservationId: string;
+  orderId: string;
+  assignedActorId: string | null;
+  status: FulfillmentTaskStatus;
+  orderStatus: string;
+  pickingStartedAt: string | null;
+  pickingCompletedAt: string | null;
+  packedAt: string | null;
+  packageCount: number | null;
+  weightKg: number | null;
+  packingNotes: string | null;
+  lines: FulfillmentTaskLine[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FulfillmentQualityCheckInput {
+  status: "PASSED" | "FAILED";
+  reason?: string;
+  notes?: string;
+}
+
+export interface FulfillmentQualityCheckResult {
+  id: string;
+  fulfillmentTaskId: string;
+  status: "PASSED" | "FAILED";
 }
 
 export interface PageResult<T> {

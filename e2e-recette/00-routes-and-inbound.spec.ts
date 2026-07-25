@@ -51,7 +51,7 @@ test.describe("noki-operations real-stack smoke (OPERATIONS demo account)", () =
 
     const firstRow = page.getByRole("row").nth(1);
     const hasRows = await firstRow.isVisible().catch(() => false);
-    test.skip(!hasRows, "no inbound shipment present in the demo dataset to exercise a partial receipt against");
+    expect(hasRows, "demo dataset must contain an inbound shipment for the recette").toBe(true);
 
     await page.getByRole("link", { name: /voir|view/i }).first().click();
     await expect(page.locator("h1")).toBeVisible();

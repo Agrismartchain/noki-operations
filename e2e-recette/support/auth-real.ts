@@ -1,8 +1,23 @@
 import { expect, type Page } from "@playwright/test";
 
+const demoPassword =
+  process.env.RECETTE_DEMO_PASSWORD ??
+  process.env.NOKI_DEMO_PASSWORD ??
+  process.env.RECETTE_OPERATIONS_PASSWORD ??
+  process.env.RECETTE_CONTACT_CENTER_PASSWORD ??
+  "";
+
 export const RECETTE = {
   operationsEmail: process.env.RECETTE_OPERATIONS_EMAIL ?? "operations.demo@example.invalid",
-  operationsPassword: process.env.RECETTE_OPERATIONS_PASSWORD ?? "",
+  operationsPassword: process.env.RECETTE_OPERATIONS_PASSWORD ?? demoPassword,
+  contactCenterEmail: process.env.RECETTE_CONTACT_CENTER_EMAIL ?? "contact.demo@example.invalid",
+  contactCenterPassword: process.env.RECETTE_CONTACT_CENTER_PASSWORD ?? demoPassword,
+  financeEmail: process.env.RECETTE_FINANCE_EMAIL ?? "finance01.demo@example.invalid",
+  financePassword: process.env.RECETTE_FINANCE_PASSWORD ?? demoPassword,
+  auditorEmail: process.env.RECETTE_AUDITOR_EMAIL ?? "auditor.demo@example.invalid",
+  auditorPassword: process.env.RECETTE_AUDITOR_PASSWORD ?? demoPassword,
+  superAdminEmail: process.env.RECETTE_SUPER_ADMIN_EMAIL ?? "superadmin.demo@example.invalid",
+  superAdminPassword: process.env.RECETTE_SUPER_ADMIN_PASSWORD ?? demoPassword,
 };
 
 export async function loginReal(page: Page, email: string, password: string) {

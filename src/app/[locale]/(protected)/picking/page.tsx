@@ -1,22 +1,35 @@
+import { OpsStack } from "@/features/operations/components/ops-stack";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 
 import { ForbiddenView } from "@/components/auth/forbidden-view";
-import { ComingSoonView } from "@/features/operations/components/coming-soon-view";
+import { OpsPageHeader } from "@/features/operations/components/ops-page-header";
+import { OpsPagination } from "@/features/operations/components/ops-pagination";
+import { OpsStatusTabs } from "@/features/operations/components/ops-status-tabs";
+import { PickingTable } from "@/features/operations/components/picking-table";
+import { listFulfillmentTasks } from "@/features/operations/server/client";
+import { parseOpsListSearchParams, type OpsSearchParams } from "@/features/operations/server/list-query";
+import type { FulfillmentTaskStatus } from "@/features/operations/types";
 import { redirect } from "@/i18n/navigation";
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth/cookies";
 import { hasCapability } from "@/lib/auth/session";
 import { getServerSessionResolution } from "@/lib/auth/server-session";
 
-type PageProps = { params: Promise<{ locale: string }> };
+type PageProps = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<OpsSearchParams>;
+};
+
+const PICKING_STATUSES: FulfillmentTaskStatus[] = ["OPEN", "ASSIGNED", "PICKING"];
 
 /**
- * Real, capability-gated route. The mutation endpoints already exist in
- * noki-api (POST /v1/fulfillment/tasks/{id}/assign, /start-picking,
- * /complete-picking) but the picking-queue UI is out of scope for this pass
- * -- see src/domains/registry.ts.
+ * Real picking queue backed by GET /v1/admin/operations/fulfillment
+ * (AdminOperationsController.fulfillment). That endpoint only accepts one
+ * `status` value at a time, so the queue is scoped with a status tab bar
+ * (Open / Assigned / Picking) instead of a fabricated multi-status filter --
+ * each tab is one real, correctly-paginated query.
  */
-export default async function PickingPage({ params }: PageProps) {
+export default async function PickingPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE)?.value;
@@ -36,13 +49,33 @@ export default async function PickingPage({ params }: PageProps) {
   }
 
   const t = await getTranslations();
+  const filters = parseOpsListSearchParams(await searchParams);
+  const status = (PICKING_STATUSES as string[]).includes(filters.status ?? "") ? (filters.status as FulfillmentTaskStatus) : "OPEN";
+  const activeFilters = { ...filters, status };
+
+  const result = await listFulfillmentTasks(
+    { search: filters.search, organizationId: filters.organizationId, status, page: filters.page, pageSize: filters.pageSize },
+    { accessToken, locale },
+  );
+
   return (
-    <ComingSoonView
-      eyebrow={t("common.brand")}
-      title={t("navigation.picking")}
-      description={t("comingSoon.description")}
-      comingSoonTitle={t("comingSoon.title")}
-      comingSoonDescription={t("comingSoon.description")}
-    />
+    <OpsStack>
+      <OpsPageHeader
+        breadcrumbsLabel={t("picking.list.breadcrumbsLabel")}
+        brandLabel={t("common.brand")}
+        brandHref="/"
+        sectionLabel={t("picking.list.sectionLabel")}
+        eyebrow={t("picking.list.eyebrow")}
+        title={t("picking.list.title")}
+        description={t("picking.list.description")}
+      />
+      <OpsStatusTabs
+        filters={activeFilters}
+        aria-label={t("picking.list.statusFilterLabel")}
+        options={PICKING_STATUSES.map((value) => ({ value, label: t(`picking.status.${value}`) }))}
+      />
+      <PickingTable tasks={result.items} />
+      <OpsPagination filters={activeFilters} page={result.page} pageSize={result.pageSize} total={result.total} />
+    </OpsStack>
   );
 }

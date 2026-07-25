@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@agrismartchain/noki-design-system";
+import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -29,7 +30,7 @@ export function LogoutButton() {
   }
 
   return (
-    <Button variant="secondary" size="sm" onClick={handleLogout} loading={pending} disabled={pending}>
+    <Button variant="secondary" size="sm" onClick={handleLogout} loading={pending} disabled={pending} startIcon={<LogOut aria-hidden="true" size={16} />}>
       {t("auth.logout.action")}
     </Button>
   );

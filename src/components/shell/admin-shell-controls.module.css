@@ -1,16 +1,75 @@
 .controls {
   flex-wrap: wrap;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: hidden;
 }
 
 .localeGroup {
   border-inline-end: 1px solid var(--noki-color-semantic-border-subtle);
   padding-inline-end: var(--noki-space-2);
+  flex: 0 0 auto;
 }
 
 .themeToggle {
   flex-shrink: 0;
 }
 
+.themeToggle,
+.logoutControl {
+  min-inline-size: 0;
+}
+
 .logoutControl {
   margin-inline-start: var(--noki-space-2);
+  flex: 0 1 auto;
+}
+
+@media (max-width: 480px) {
+  .controls {
+    gap: var(--noki-space-1);
+  }
+
+  .localeGroup {
+    gap: 1px;
+    padding: 2px;
+  }
+
+  .localeGroup button {
+    min-inline-size: 2.25rem;
+    padding-inline: var(--noki-space-2);
+  }
+
+  .themeToggle button {
+    min-inline-size: 2rem;
+    padding-inline: var(--noki-space-2);
+  }
+
+  .themeToggle button span:last-child {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .logoutControl {
+    margin-inline-start: 0;
+    flex: 0 0 auto;
+  }
+
+  .logoutControl button {
+    min-inline-size: 2rem;
+    padding-inline: var(--noki-space-2);
+  }
+
+  .logoutControl button span:last-child {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
 }

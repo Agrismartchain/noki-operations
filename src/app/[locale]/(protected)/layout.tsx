@@ -8,6 +8,7 @@ import { ForbiddenView } from "@/components/auth/forbidden-view";
 import { SessionKeepAlive } from "@/components/auth/session-keepalive";
 import { redirect } from "@/i18n/navigation";
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "@/lib/auth/cookies";
+import { hasCapability } from "@/lib/auth/session";
 import { getServerSessionResolution } from "@/lib/auth/server-session";
 
 type ProtectedLayoutProps = {
@@ -27,9 +28,12 @@ export default async function ProtectedLayout({ children, params }: ProtectedLay
     redirect({ href: "/login", locale });
   }
 
-  const t = await getTranslations();
+  if (session.status !== "authenticated" || !hasCapability(session.actor, "operations.read")) {
+    return <ForbiddenView />;
+  }
 
-  const actor = session.status === "authenticated" ? session.actor : undefined;
+  const t = await getTranslations();
+  const actor = session.actor;
 
   return (
     <AdminShell
@@ -38,7 +42,7 @@ export default async function ProtectedLayout({ children, params }: ProtectedLay
       mobileNavigationLabel={t("shell.openMenu")}
     >
       <SessionKeepAlive />
-      {session.status === "forbidden" ? <ForbiddenView /> : children}
+      {children}
     </AdminShell>
   );
 }

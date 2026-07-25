@@ -291,5 +291,337 @@
     "eyebrow": "Coming soon",
     "title": "This section is coming soon",
     "description": "This page is planned for an upcoming NOKI Operations iteration. The corresponding actions already exist on NOKI API and will be wired to this interface."
+  },
+  "picking": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Picking",
+      "description": "Real queue for taking ownership, starting, and completing picking tasks.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Picking",
+      "statusFilterLabel": "Filter by picking status"
+    },
+    "table": {
+      "ariaLabel": "Picking queue"
+    },
+    "columns": {
+      "order": "Order",
+      "warehouse": "Warehouse",
+      "assignee": "Operator",
+      "status": "Status",
+      "lines": "Lines",
+      "age": "Age",
+      "actions": "Actions"
+    },
+    "age": {
+      "notStarted": "Not started",
+      "hoursAgo": "{count} h ago"
+    },
+    "actions": {
+      "view": "View",
+      "assign": "Assign",
+      "startPicking": "Start picking",
+      "completePicking": "Complete picking"
+    },
+    "empty": {
+      "title": "No picking task",
+      "description": "No task matches this status."
+    },
+    "unassigned": "Unassigned",
+    "status": {
+      "OPEN": "Open",
+      "ASSIGNED": "Assigned",
+      "PICKING": "Picking",
+      "PACKED": "Packed",
+      "QC_PENDING": "QC pending",
+      "QC_FAILED": "QC failed",
+      "QC_PASSED": "QC passed",
+      "READY_FOR_DISPATCH": "Ready for dispatch",
+      "CANCELLED": "Cancelled"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Summary",
+        "actions": "Actions",
+        "lines": "Lines to confirm"
+      },
+      "taskId": "Task",
+      "orderStatus": "Order status",
+      "assignedActorId": "Assigned to",
+      "pickingStartedAt": "Picking started at",
+      "pickingCompletedAt": "Picking completed at",
+      "assignInputLabel": "Operator ID",
+      "assignInputPlaceholder": "Actor UUID to assign",
+      "linesNote": "Quantities come from the real reservation lines.",
+      "lines": {
+        "product": "Product",
+        "variant": "Variant",
+        "quantity": "Quantity"
+      }
+    }
+  },
+  "packing": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Packing",
+      "description": "Tasks with picking in progress or complete, ready to pack once quantities are confirmed.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Packing"
+    },
+    "table": {
+      "ariaLabel": "Packing queue"
+    },
+    "columns": {
+      "order": "Order",
+      "warehouse": "Warehouse",
+      "assignee": "Operator",
+      "status": "Status",
+      "lines": "Lines",
+      "age": "Age",
+      "actions": "Actions"
+    },
+    "age": {
+      "hoursAgo": "{count} h ago"
+    },
+    "actions": {
+      "view": "View",
+      "completePacking": "Complete packing"
+    },
+    "empty": {
+      "title": "No packing task",
+      "description": "No task is ready for packing."
+    },
+    "unassigned": "Unassigned",
+    "status": {
+      "OPEN": "Open",
+      "ASSIGNED": "Assigned",
+      "PICKING": "Picking",
+      "PACKED": "Packed",
+      "QC_PENDING": "QC pending",
+      "QC_FAILED": "QC failed",
+      "QC_PASSED": "QC passed",
+      "READY_FOR_DISPATCH": "Ready for dispatch",
+      "CANCELLED": "Cancelled"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Summary",
+        "actions": "Package data and action",
+        "lines": "Packed lines"
+      },
+      "taskId": "Task",
+      "orderStatus": "Order status",
+      "pickingStartedAt": "Picking started at",
+      "pickingCompletedAt": "Picking completed at",
+      "notReadyTitle": "Picking not complete",
+      "notReadyDescription": "Packing is blocked until picking completion is confirmed by the API.",
+      "linesNote": "Lines come from the API-confirmed inventory reservation; package count, weight and notes are persisted when packing completes.",
+      "packedAt": "Packed at",
+      "packageCount": "Package count",
+      "packageCountPlaceholder": "E.g. 3",
+      "weightKg": "Total weight (kg)",
+      "weightKgPlaceholder": "E.g. 12.5",
+      "notesLabel": "Packing notes",
+      "notesPlaceholder": "Fragile, double box…",
+      "lines": {
+        "product": "Product",
+        "variant": "Variant",
+        "quantity": "Quantity"
+      }
+    }
+  },
+  "qc": {
+    "list": {
+      "eyebrow": "Quality",
+      "title": "Quality control",
+      "description": "PACKED / QC_PENDING / QC_FAILED queue before shipping.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Quality control",
+      "statusFilterLabel": "Filter by QC status"
+    },
+    "table": {
+      "ariaLabel": "Quality-control queue"
+    },
+    "columns": {
+      "order": "Order",
+      "warehouse": "Warehouse",
+      "status": "Status",
+      "lines": "Lines",
+      "packedAt": "Packed at",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View",
+      "submitPass": "Pass QC",
+      "submitFail": "Fail QC"
+    },
+    "empty": {
+      "title": "No QC task",
+      "description": "No task matches this QC status."
+    },
+    "status": {
+      "OPEN": "Open",
+      "ASSIGNED": "Assigned",
+      "PICKING": "Picking",
+      "PACKED": "Packed",
+      "QC_PENDING": "QC pending",
+      "QC_FAILED": "QC failed",
+      "QC_PASSED": "QC passed",
+      "READY_FOR_DISPATCH": "Ready for dispatch",
+      "CANCELLED": "Cancelled"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Summary",
+        "check": "QC decision",
+        "lines": "Checked lines"
+      },
+      "taskId": "Task",
+      "orderStatus": "Order status",
+      "statusLegend": "Check result",
+      "pass": "PASS",
+      "fail": "FAIL",
+      "reasonLabel": "Failure reason",
+      "reasonPlaceholder": "Describe the observed defect",
+      "reasonRequired": "A reason is required for FAIL.",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Optional internal notes",
+      "linesNote": "FAIL keeps the task out of Shipping; PASS authorizes the next step.",
+      "lines": {
+        "product": "Product",
+        "variant": "Variant",
+        "quantity": "Quantity"
+      }
+    }
+  },
+  "shipping": {
+    "list": {
+      "eyebrow": "Shipping",
+      "title": "Shipping orders",
+      "description": "Real commerce DeliveryShipment list with seller, warehouse, destination, COD, driver, and QC.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Shipping",
+      "statusFilterLabel": "Filter by delivery status"
+    },
+    "table": {
+      "ariaLabel": "Shipments list"
+    },
+    "columns": {
+      "order": "Order",
+      "warehouse": "Warehouse",
+      "status": "Status",
+      "driver": "Driver",
+      "country": "Country",
+      "cod": "COD",
+      "qc": "QC",
+      "attempts": "Attempts",
+      "incidents": "Incidents",
+      "updatedAt": "Updated",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "empty": {
+      "title": "No shipment",
+      "description": "No DeliveryShipment matches these filters."
+    },
+    "unassigned": "Unassigned",
+    "status": {
+      "ALL": "All",
+      "READY_FOR_DISPATCH": "Ready for dispatch",
+      "ASSIGNED": "Assigned",
+      "OUT_FOR_DELIVERY": "Out for delivery",
+      "DELIVERED": "Delivered",
+      "FAILED": "Failed",
+      "CANCELLED": "Cancelled"
+    },
+    "qcStatus": {
+      "PENDING": "Pending",
+      "PASSED": "Passed",
+      "FAILED": "Failed"
+    },
+    "fulfillmentStatus": {
+      "OPEN": "Open",
+      "ASSIGNED": "Assigned",
+      "PICKING": "Picking",
+      "PACKED": "Packed",
+      "QC_PENDING": "QC pending",
+      "QC_FAILED": "QC failed",
+      "QC_PASSED": "QC passed",
+      "READY_FOR_DISPATCH": "Ready for dispatch",
+      "CANCELLED": "Cancelled"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Shipment detail"
+      },
+      "organization": "Seller / organization",
+      "destination": "Destination",
+      "driverPhone": "Driver phone",
+      "codCollected": "COD collected",
+      "codStatus": "COD status",
+      "fulfillmentStatus": "Fulfillment status",
+      "fulfillmentTaskId": "Fulfillment task",
+      "evidenceCount": "Evidence",
+      "pickupLocation": "Pickup location",
+      "lastPosition": "Last known position",
+      "lastPositionAt": "Position recorded at",
+      "assignedAt": "Assigned at",
+      "outForDeliveryAt": "Out for delivery at",
+      "deliveredAt": "Delivered at",
+      "failedAt": "Failed at",
+      "updatedAt": "Updated at"
+    }
+  },
+  "incidents": {
+    "list": {
+      "eyebrow": "Incidents",
+      "title": "Operational incidents",
+      "description": "Real delivery incidents with status, source, severity, and resolution according to available permissions.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Incidents",
+      "statusFilterLabel": "Filter by incident status"
+    },
+    "table": {
+      "ariaLabel": "Operational incidents list"
+    },
+    "columns": {
+      "order": "Order",
+      "type": "Source",
+      "status": "Status",
+      "country": "Country",
+      "reportedBy": "Reported by",
+      "createdAt": "Created at",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Detail"
+    },
+    "empty": {
+      "title": "No incident",
+      "description": "No incident matches these filters."
+    },
+    "status": {
+      "ALL": "All",
+      "OPEN": "Open",
+      "RESOLVED": "Resolved"
+    },
+    "type": {
+      "DELAY": "Delay",
+      "VEHICLE_ISSUE": "Vehicle issue",
+      "SAFETY": "Safety",
+      "OTHER": "Other"
+    },
+    "detail": {
+      "title": "Incident detail",
+      "reportedBy": "Reported by",
+      "comment": "Comment",
+      "noComment": "No comment",
+      "location": "Location",
+      "createdAt": "Created at",
+      "resolvedBy": "Resolved by",
+      "resolvedAt": "Resolved at"
+    }
   }
 }

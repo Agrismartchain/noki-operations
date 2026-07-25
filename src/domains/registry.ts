@@ -8,13 +8,13 @@ import type { DomainDescriptor } from "./types";
  * global Users, or Governance items exist here -- this role structurally
  * cannot reach them.
  *
- * Dashboard, Inbound, Receiving and Inventory are fully implemented against
- * real backend endpoints. Picking, Packing, QC, Shipping Orders and
- * Incidents are real, capability-gated routes that currently render a
- * "coming soon" notice -- their mutation endpoints exist in noki-api
- * (fulfillment.controller.ts, commerce-cod.controller.ts,
- * admin-operations.controller.ts) but the queue/detail UI for them is out of
- * scope for this pass and will be built in a follow-up.
+ * Every item is fully implemented against real backend endpoints: Dashboard,
+ * Inbound, Receiving, Inventory and Movements, plus Picking, Packing, QC
+ * (fulfillment.controller.ts / commerce-cod.controller.ts), and the
+ * read-only Shipping and Incidents monitoring views
+ * (admin-operations.controller.ts). This registry also doubles as the
+ * app-level access gate in (protected)/layout.tsx: an actor with none of
+ * these capabilities gets ForbiddenView instead of the app shell.
  */
 export const DOMAIN_REGISTRY: DomainDescriptor[] = [
   { id: "dashboard", labelKey: "navigation.dashboard", href: "/", capability: "operations.read" },
