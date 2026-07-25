@@ -1,0 +1,16 @@
+.controls {
+  flex-wrap: wrap;
+}
+
+.localeGroup {
+  border-inline-end: 1px solid var(--noki-color-semantic-border-subtle);
+  padding-inline-end: var(--noki-space-2);
+}
+
+.themeToggle {
+  flex-shrink: 0;
+}
+
+.logoutControl {
+  margin-inline-start: var(--noki-space-2);
+}

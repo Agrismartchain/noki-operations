@@ -1,0 +1,126 @@
+.primary {
+  color: var(--noki-color-semantic-text-primary);
+}
+
+.secondary {
+  margin-top: var(--noki-space-1);
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-xs);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.rowAction {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--noki-radius-control);
+  padding-block: var(--noki-space-1);
+  padding-inline: var(--noki-space-2);
+  color: var(--noki-color-semantic-action-primary);
+  font-size: var(--noki-font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.rowAction:hover {
+  color: var(--noki-color-semantic-action-primary-hover);
+  text-decoration: underline;
+}
+
+.rowAction:focus-visible {
+  outline: 2px solid var(--noki-color-semantic-focus);
+  outline-offset: 2px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-6);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--noki-space-4);
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noki-space-2);
+  align-items: flex-start;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-1);
+}
+
+.label {
+  font-size: var(--noki-font-size-sm);
+  font-weight: 600;
+  color: var(--noki-color-semantic-text-secondary);
+}
+
+.input {
+  border: 1px solid var(--noki-color-semantic-border-subtle);
+  border-radius: var(--noki-radius-control);
+  padding-block: var(--noki-space-2);
+  padding-inline: var(--noki-space-3);
+  font-size: var(--noki-font-size-sm);
+  background: var(--noki-color-semantic-surface);
+  color: var(--noki-color-semantic-text-primary);
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-2);
+  border: 1px solid var(--noki-color-semantic-border-subtle);
+  border-radius: var(--noki-radius-md);
+  padding: var(--noki-space-4);
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--noki-space-4);
+}
+
+.remaining {
+  font-size: var(--noki-font-size-xs);
+  color: var(--noki-color-semantic-text-secondary);
+}
+
+.miniTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--noki-font-size-sm);
+}
+
+.miniTable th,
+.miniTable td {
+  border-bottom: 1px solid var(--noki-color-semantic-border-subtle);
+  padding-block: var(--noki-space-2);
+  padding-inline: var(--noki-space-2);
+  text-align: start;
+  vertical-align: top;
+}
+
+.miniTable th {
+  color: var(--noki-color-semantic-text-secondary);
+  font-weight: 600;
+}

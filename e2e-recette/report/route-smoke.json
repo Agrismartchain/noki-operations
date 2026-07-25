@@ -1,0 +1,62 @@
+[
+  {
+    "route": "/fr",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/inbound",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/receiving",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/inventory",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/movements",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/picking",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/packing",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/qc",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/shipping",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  },
+  {
+    "route": "/fr/incidents",
+    "status": 200,
+    "h1Count": 1,
+    "ok": true
+  }
+]

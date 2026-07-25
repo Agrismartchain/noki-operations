@@ -1,0 +1,101 @@
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding-inline: var(--noki-space-6);
+  padding-block: var(--noki-space-6);
+  background: var(--noki-color-semantic-surface);
+  color: var(--noki-color-semantic-text-primary);
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background: var(--noki-gradient-sidebar-glow);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--noki-space-10);
+  min-block-size: 100%;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--noki-space-2);
+}
+
+.wordmarkMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: var(--noki-radius-sm);
+  background: var(--noki-color-semantic-brand-accent);
+  color: var(--noki-color-primitive-yellow-ink);
+  font-weight: 700;
+  font-size: var(--noki-font-size-md);
+}
+
+.wordmarkText {
+  font-size: var(--noki-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--noki-color-semantic-text-secondary);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-4);
+  max-inline-size: 34rem;
+}
+
+.eyebrow {
+  font-size: var(--noki-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--noki-color-semantic-brand-accent);
+  margin-block: 0;
+}
+
+.headline {
+  font-size: var(--noki-font-size-3xl);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-block: 0;
+  color: var(--noki-color-semantic-text-primary);
+}
+
+.subtext {
+  font-size: var(--noki-font-size-lg);
+  line-height: 1.5;
+  color: var(--noki-color-semantic-text-secondary);
+  margin-block: 0;
+}
+
+@media (max-width: 767px) {
+  .panel {
+    justify-content: flex-start;
+    padding-block: var(--noki-space-5);
+  }
+
+  .content {
+    min-block-size: auto;
+    gap: var(--noki-space-4);
+  }
+
+  .copy {
+    display: none;
+  }
+}

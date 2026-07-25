@@ -1,0 +1,295 @@
+{
+  "metadata": {
+    "title": "NOKI Operations",
+    "description": "Backoffice interne des opérations entrepôt NOKI : réception, inventaire, picking, packing, contrôle qualité et expédition."
+  },
+  "common": {
+    "brand": "NOKI Operations",
+    "brandOrganization": "NOKI — Opérations internes",
+    "actions": {
+      "saving": "Enregistrement..."
+    },
+    "pagination": {
+      "ariaLabel": "Pagination",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "rowsPerPage": "Lignes par page"
+    }
+  },
+  "locale": {
+    "switcherLabel": "Langue"
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "switcherLabel": "Thème"
+  },
+  "shell": {
+    "openMenu": "Ouvrir le menu"
+  },
+  "navigation": {
+    "landmarkLabel": "Navigation principale",
+    "scopeNotice": "Accès interne NOKI uniquement",
+    "dashboard": "Tableau de bord",
+    "inbound": "Expéditions entrantes",
+    "receiving": "Réceptions",
+    "inventory": "Inventaire",
+    "movements": "Mouvements de stock",
+    "picking": "Picking",
+    "packing": "Packing",
+    "qc": "Contrôle qualité",
+    "shipping": "Shipping Orders",
+    "incidents": "Incidents opérationnels"
+  },
+  "errors": {
+    "forbiddenTitle": "Accès refusé",
+    "forbiddenDescription": "Votre compte n'a pas les autorisations nécessaires pour accéder à cette page."
+  },
+  "session": {
+    "expiredNotice": "Votre session a expiré. Veuillez vous reconnecter."
+  },
+  "auth": {
+    "branding": {
+      "eyebrow": "NOKI Operations",
+      "headline": "Le backoffice entrepôt du réseau NOKI",
+      "subtext": "Réception, inventaire, picking, packing, contrôle qualité et expédition — réservé au personnel interne NOKI autorisé."
+    },
+    "login": {
+      "welcomeTitle": "Connexion",
+      "subtitle": "Connectez-vous avec votre compte interne NOKI Operations.",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "submitPending": "Connexion...",
+      "errorTitle": "Connexion impossible",
+      "validation": {
+        "emailRequired": "L'e-mail est requis.",
+        "passwordRequired": "Le mot de passe est requis."
+      },
+      "errors": {
+        "invalidCredentials": "E-mail ou mot de passe incorrect.",
+        "configurationMissing": "Configuration du service indisponible. Contactez un administrateur.",
+        "serviceUnavailable": "Service momentanément indisponible. Réessayez.",
+        "timeout": "Le service met trop de temps à répondre. Réessayez.",
+        "rateLimited": "Trop de tentatives. Réessayez dans quelques instants.",
+        "unexpected": "Une erreur inattendue est survenue."
+      }
+    },
+    "logout": {
+      "action": "Se déconnecter"
+    }
+  },
+  "mutations": {
+    "successTitle": "Opération réussie",
+    "errorTitle": "Échec de l'opération",
+    "correlationId": "Référence",
+    "saved": "Modifications enregistrées.",
+    "errors": {
+      "validation": "Certains champs sont invalides.",
+      "forbidden": "Vous n'avez pas l'autorisation d'effectuer cette action.",
+      "conflict": "Cette action entre en conflit avec l'état actuel de la ressource.",
+      "rateLimited": "Trop de tentatives. Réessayez dans quelques instants.",
+      "unavailable": "Le service NOKI API est momentanément indisponible.",
+      "unexpected": "Une erreur inattendue est survenue."
+    }
+  },
+  "inbound": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Expéditions entrantes",
+      "description": "Suivi des expéditions fournisseurs/vendeurs en direction de vos entrepôts.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Expéditions entrantes"
+    },
+    "detail": {
+      "eyebrow": "Expédition entrante",
+      "title": "Détail de l'expédition",
+      "description": "Lignes attendues, réception partielle et historique des réceptions.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Détail de l'expédition",
+      "sections": {
+        "summary": "Résumé",
+        "actions": "Actions",
+        "lines": "Lignes attendues",
+        "receive": "Réceptionner",
+        "receipts": "Historique des réceptions"
+      },
+      "seller": "Vendeur",
+      "supplier": "Fournisseur"
+    },
+    "table": {
+      "ariaLabel": "Liste des expéditions entrantes"
+    },
+    "columns": {
+      "reference": "Référence",
+      "status": "Statut",
+      "warehouse": "Entrepôt",
+      "country": "Pays",
+      "lines": "Lignes",
+      "expectedArrival": "Arrivée prévue",
+      "actions": "Actions"
+    },
+    "status": {
+      "DRAFT": "Brouillon",
+      "READY": "Prête",
+      "SHIPPED": "Expédiée",
+      "IN_TRANSIT": "En transit",
+      "PARTIALLY_RECEIVED": "Partiellement reçue",
+      "RECEIVED": "Reçue",
+      "CANCELLED": "Annulée"
+    },
+    "actions": {
+      "view": "Voir",
+      "submit": "Soumettre",
+      "ship": "Marquer expédiée",
+      "cancel": "Annuler"
+    },
+    "empty": {
+      "title": "Aucune expédition entrante",
+      "description": "Aucune expédition entrante ne correspond à ces critères."
+    },
+    "lines": {
+      "product": "Produit",
+      "expected": "Attendu",
+      "received": "Reçu",
+      "damaged": "Endommagé"
+    },
+    "receive": {
+      "receivedQuantity": "Quantité reçue",
+      "damagedQuantity": "Quantité endommagée",
+      "remaining": "Restant : {count}"
+    }
+  },
+  "receiving": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Réceptions",
+      "description": "Historique des réceptions enregistrées, avec écarts et quantités endommagées.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Réceptions"
+    },
+    "table": {
+      "ariaLabel": "Historique des réceptions"
+    },
+    "columns": {
+      "shipmentReference": "Expédition",
+      "warehouse": "Entrepôt",
+      "seller": "Vendeur",
+      "postedAt": "Réceptionnée le",
+      "receivedQuantity": "Quantité reçue",
+      "damagedQuantity": "Quantité endommagée",
+      "discrepancyQuantity": "Écart"
+    },
+    "empty": {
+      "title": "Aucune réception",
+      "description": "Aucune réception enregistrée pour ces critères."
+    },
+    "actions": {
+      "review": "Vérifier avant validation",
+      "confirmSubmit": "Confirmer la réception"
+    },
+    "confirm": {
+      "description": "Vérifiez les quantités avant de confirmer la réception.",
+      "back": "Retour"
+    },
+    "errors": {
+      "invalidLine": "Quantité invalide pour cette ligne."
+    }
+  },
+  "inventory": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Inventaire",
+      "description": "Niveaux de stock par entrepôt, vendeur et produit.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Inventaire"
+    },
+    "table": {
+      "ariaLabel": "Niveaux de stock"
+    },
+    "columns": {
+      "product": "Produit",
+      "warehouse": "Entrepôt",
+      "seller": "Vendeur",
+      "onHand": "En stock",
+      "available": "Disponible",
+      "reserved": "Réservé",
+      "defective": "Défectueux"
+    },
+    "empty": {
+      "title": "Aucun stock",
+      "description": "Aucune ligne de stock ne correspond à ces critères."
+    }
+  },
+  "movements": {
+    "list": {
+      "eyebrow": "Entrepôt",
+      "title": "Mouvements de stock",
+      "description": "Historique des mouvements de stock : réceptions, picking, ajustements, retours et casse.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Mouvements de stock"
+    },
+    "table": {
+      "ariaLabel": "Historique des mouvements de stock"
+    },
+    "columns": {
+      "date": "Date",
+      "product": "Produit",
+      "type": "Type",
+      "warehouse": "Entrepôt",
+      "quantity": "Quantité",
+      "actor": "Opérateur"
+    },
+    "types": {
+      "ADJUSTMENT_IN": "Ajustement entrant",
+      "ADJUSTMENT_OUT": "Ajustement sortant",
+      "INBOUND_RECEIPT": "Réception entrante",
+      "RESERVATION_CREATED": "Réservation créée",
+      "RESERVATION_RELEASED": "Réservation libérée",
+      "PICK": "Picking",
+      "RELEASE": "Libération",
+      "TRANSFER": "Transfert",
+      "RETURN": "Retour",
+      "DAMAGE": "Casse"
+    },
+    "empty": {
+      "title": "Aucun mouvement",
+      "description": "Aucun mouvement de stock ne correspond à ces critères."
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "description": "Vue d'ensemble des opérations entrepôt en temps réel.",
+    "generatedAt": "Actualisé le {date}",
+    "sections": {
+      "warehouses": "Entrepôts",
+      "inventory": "Inventaire",
+      "fulfillment": "Préparation des commandes",
+      "delivery": "Expédition",
+      "quality": "Qualité"
+    },
+    "metrics": {
+      "warehousesTotal": "Entrepôts",
+      "warehousesActive": "Entrepôts actifs",
+      "inboundInTransit": "Expéditions entrantes en transit",
+      "inventoryOnHand": "Quantité en stock",
+      "inventoryAvailable": "Quantité disponible",
+      "inventoryReserved": "Quantité réservée",
+      "activeReservations": "Réservations actives",
+      "fulfillmentOpen": "Tâches ouvertes",
+      "fulfillmentAssigned": "Tâches assignées",
+      "fulfillmentPicking": "Picking en cours",
+      "fulfillmentPacked": "Emballées",
+      "qcPending": "QC en attente",
+      "qcFailed": "QC échoué",
+      "readyForDispatch": "Prêtes à expédier",
+      "activeShipments": "Expéditions actives",
+      "openIncidents": "Incidents ouverts"
+    }
+  },
+  "comingSoon": {
+    "eyebrow": "Bientôt disponible",
+    "title": "Cette section arrive bientôt",
+    "description": "Cette page est planifiée dans une prochaine itération de NOKI Operations. Les actions correspondantes existent déjà côté NOKI API et seront reliées à cette interface."
+  }
+}

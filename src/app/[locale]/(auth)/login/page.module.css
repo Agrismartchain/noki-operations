@@ -1,0 +1,34 @@
+.page {
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr;
+  background: var(--noki-color-semantic-background);
+}
+
+@media (min-width: 768px) {
+  .page {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.loginPanel {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100%;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline: var(--noki-space-4);
+  padding-block: var(--noki-space-4);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--noki-space-6);
+  padding-block: var(--noki-space-8);
+}

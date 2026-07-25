@@ -1,0 +1,295 @@
+{
+  "metadata": {
+    "title": "NOKI Operations",
+    "description": "النظام الداخلي لعمليات مستودعات NOKI: الاستلام، المخزون، الالتقاط، التعبئة، مراقبة الجودة والشحن."
+  },
+  "common": {
+    "brand": "NOKI Operations",
+    "brandOrganization": "NOKI — العمليات الداخلية",
+    "actions": {
+      "saving": "جارٍ الحفظ..."
+    },
+    "pagination": {
+      "ariaLabel": "ترقيم الصفحات",
+      "next": "التالي",
+      "previous": "السابق",
+      "rowsPerPage": "عدد الصفوف في الصفحة"
+    }
+  },
+  "locale": {
+    "switcherLabel": "اللغة"
+  },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "switcherLabel": "المظهر"
+  },
+  "shell": {
+    "openMenu": "فتح القائمة"
+  },
+  "navigation": {
+    "landmarkLabel": "التنقل الرئيسي",
+    "scopeNotice": "الوصول الداخلي لموظفي NOKI فقط",
+    "dashboard": "لوحة التحكم",
+    "inbound": "الشحنات الواردة",
+    "receiving": "الاستلام",
+    "inventory": "المخزون",
+    "movements": "حركات المخزون",
+    "picking": "الالتقاط",
+    "packing": "التعبئة",
+    "qc": "مراقبة الجودة",
+    "shipping": "أوامر الشحن",
+    "incidents": "الحوادث التشغيلية"
+  },
+  "errors": {
+    "forbiddenTitle": "الوصول مرفوض",
+    "forbiddenDescription": "لا يملك حسابك الصلاحيات اللازمة للوصول إلى هذه الصفحة."
+  },
+  "session": {
+    "expiredNotice": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجددًا."
+  },
+  "auth": {
+    "branding": {
+      "eyebrow": "NOKI Operations",
+      "headline": "النظام الداخلي لمستودعات شبكة NOKI",
+      "subtext": "الاستلام، المخزون، الالتقاط، التعبئة، مراقبة الجودة والشحن — مخصص لموظفي NOKI الداخليين المصرح لهم فقط."
+    },
+    "login": {
+      "welcomeTitle": "تسجيل الدخول",
+      "subtitle": "سجّل الدخول باستخدام حساب NOKI Operations الداخلي الخاص بك.",
+      "emailLabel": "البريد الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "submitPending": "جارٍ تسجيل الدخول...",
+      "errorTitle": "تعذّر تسجيل الدخول",
+      "validation": {
+        "emailRequired": "البريد الإلكتروني مطلوب.",
+        "passwordRequired": "كلمة المرور مطلوبة."
+      },
+      "errors": {
+        "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+        "configurationMissing": "إعدادات الخدمة غير متاحة. يرجى التواصل مع مسؤول النظام.",
+        "serviceUnavailable": "الخدمة غير متاحة مؤقتًا. يرجى إعادة المحاولة.",
+        "timeout": "استغرقت الخدمة وقتًا طويلاً للاستجابة. يرجى إعادة المحاولة.",
+        "rateLimited": "عدد كبير جدًا من المحاولات. يرجى إعادة المحاولة بعد قليل.",
+        "unexpected": "حدث خطأ غير متوقع."
+      }
+    },
+    "logout": {
+      "action": "تسجيل الخروج"
+    }
+  },
+  "mutations": {
+    "successTitle": "تم بنجاح",
+    "errorTitle": "فشلت العملية",
+    "correlationId": "المرجع",
+    "saved": "تم حفظ التعديلات.",
+    "errors": {
+      "validation": "بعض الحقول غير صالحة.",
+      "forbidden": "لا تملك صلاحية تنفيذ هذا الإجراء.",
+      "conflict": "يتعارض هذا الإجراء مع الحالة الحالية للمورد.",
+      "rateLimited": "عدد كبير جدًا من المحاولات. يرجى إعادة المحاولة بعد قليل.",
+      "unavailable": "واجهة NOKI API غير متاحة مؤقتًا.",
+      "unexpected": "حدث خطأ غير متوقع."
+    }
+  },
+  "inbound": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "الشحنات الواردة",
+      "description": "تتبّع شحنات الموردين/البائعين المتجهة إلى مستودعاتكم.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "الشحنات الواردة"
+    },
+    "detail": {
+      "eyebrow": "شحنة واردة",
+      "title": "تفاصيل الشحنة",
+      "description": "البنود المتوقعة، الاستلام الجزئي وسجل الاستلامات.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "تفاصيل الشحنة",
+      "sections": {
+        "summary": "ملخص",
+        "actions": "الإجراءات",
+        "lines": "البنود المتوقعة",
+        "receive": "استلام",
+        "receipts": "سجل الاستلامات"
+      },
+      "seller": "البائع",
+      "supplier": "المورد"
+    },
+    "table": {
+      "ariaLabel": "قائمة الشحنات الواردة"
+    },
+    "columns": {
+      "reference": "المرجع",
+      "status": "الحالة",
+      "warehouse": "المستودع",
+      "country": "البلد",
+      "lines": "البنود",
+      "expectedArrival": "الوصول المتوقع",
+      "actions": "الإجراءات"
+    },
+    "status": {
+      "DRAFT": "مسودة",
+      "READY": "جاهزة",
+      "SHIPPED": "تم الشحن",
+      "IN_TRANSIT": "قيد النقل",
+      "PARTIALLY_RECEIVED": "مستلمة جزئيًا",
+      "RECEIVED": "مستلمة",
+      "CANCELLED": "ملغاة"
+    },
+    "actions": {
+      "view": "عرض",
+      "submit": "إرسال",
+      "ship": "تعليم كمشحونة",
+      "cancel": "إلغاء"
+    },
+    "empty": {
+      "title": "لا توجد شحنات واردة",
+      "description": "لا توجد شحنة واردة مطابقة لهذه المعايير."
+    },
+    "lines": {
+      "product": "المنتج",
+      "expected": "المتوقع",
+      "received": "المستلم",
+      "damaged": "التالف"
+    },
+    "receive": {
+      "receivedQuantity": "الكمية المستلمة",
+      "damagedQuantity": "الكمية التالفة",
+      "remaining": "المتبقي: {count}"
+    }
+  },
+  "receiving": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "الاستلامات",
+      "description": "سجل الاستلامات المسجّلة، مع الفروقات والكميات التالفة.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "الاستلامات"
+    },
+    "table": {
+      "ariaLabel": "سجل الاستلامات"
+    },
+    "columns": {
+      "shipmentReference": "الشحنة",
+      "warehouse": "المستودع",
+      "seller": "البائع",
+      "postedAt": "تاريخ الاستلام",
+      "receivedQuantity": "الكمية المستلمة",
+      "damagedQuantity": "الكمية التالفة",
+      "discrepancyQuantity": "الفرق"
+    },
+    "empty": {
+      "title": "لا توجد استلامات",
+      "description": "لا يوجد استلام مطابق لهذه المعايير."
+    },
+    "actions": {
+      "review": "مراجعة قبل التأكيد",
+      "confirmSubmit": "تأكيد الاستلام"
+    },
+    "confirm": {
+      "description": "راجع الكميات قبل تأكيد الاستلام.",
+      "back": "رجوع"
+    },
+    "errors": {
+      "invalidLine": "كمية غير صالحة لهذا البند."
+    }
+  },
+  "inventory": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "المخزون",
+      "description": "مستويات المخزون حسب المستودع والبائع والمنتج.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "المخزون"
+    },
+    "table": {
+      "ariaLabel": "مستويات المخزون"
+    },
+    "columns": {
+      "product": "المنتج",
+      "warehouse": "المستودع",
+      "seller": "البائع",
+      "onHand": "المتوفر",
+      "available": "المتاح",
+      "reserved": "المحجوز",
+      "defective": "التالف"
+    },
+    "empty": {
+      "title": "لا يوجد مخزون",
+      "description": "لا يوجد سطر مخزون مطابق لهذه المعايير."
+    }
+  },
+  "movements": {
+    "list": {
+      "eyebrow": "المستودع",
+      "title": "حركات المخزون",
+      "description": "سجل حركات المخزون: الاستلامات، الالتقاط، التعديلات، المرتجعات والتلف.",
+      "breadcrumbsLabel": "مسار التصفح",
+      "sectionLabel": "حركات المخزون"
+    },
+    "table": {
+      "ariaLabel": "سجل حركات المخزون"
+    },
+    "columns": {
+      "date": "التاريخ",
+      "product": "المنتج",
+      "type": "النوع",
+      "warehouse": "المستودع",
+      "quantity": "الكمية",
+      "actor": "المشغّل"
+    },
+    "types": {
+      "ADJUSTMENT_IN": "تعديل وارد",
+      "ADJUSTMENT_OUT": "تعديل صادر",
+      "INBOUND_RECEIPT": "استلام وارد",
+      "RESERVATION_CREATED": "تم إنشاء الحجز",
+      "RESERVATION_RELEASED": "تم تحرير الحجز",
+      "PICK": "التقاط",
+      "RELEASE": "تحرير",
+      "TRANSFER": "نقل",
+      "RETURN": "إرجاع",
+      "DAMAGE": "تلف"
+    },
+    "empty": {
+      "title": "لا توجد حركات",
+      "description": "لا توجد حركة مخزون مطابقة لهذه المعايير."
+    }
+  },
+  "dashboard": {
+    "title": "لوحة التحكم",
+    "description": "نظرة عامة فورية على عمليات المستودع.",
+    "generatedAt": "آخر تحديث: {date}",
+    "sections": {
+      "warehouses": "المستودعات",
+      "inventory": "المخزون",
+      "fulfillment": "تجهيز الطلبات",
+      "delivery": "الشحن",
+      "quality": "الجودة"
+    },
+    "metrics": {
+      "warehousesTotal": "المستودعات",
+      "warehousesActive": "المستودعات النشطة",
+      "inboundInTransit": "الشحنات الواردة قيد النقل",
+      "inventoryOnHand": "الكمية المتوفرة",
+      "inventoryAvailable": "الكمية المتاحة",
+      "inventoryReserved": "الكمية المحجوزة",
+      "activeReservations": "الحجوزات النشطة",
+      "fulfillmentOpen": "المهام المفتوحة",
+      "fulfillmentAssigned": "المهام المسندة",
+      "fulfillmentPicking": "الالتقاط الجاري",
+      "fulfillmentPacked": "المعبأة",
+      "qcPending": "بانتظار مراقبة الجودة",
+      "qcFailed": "فشل في مراقبة الجودة",
+      "readyForDispatch": "جاهزة للشحن",
+      "activeShipments": "الشحنات النشطة",
+      "openIncidents": "الحوادث المفتوحة"
+    }
+  },
+  "comingSoon": {
+    "eyebrow": "قريبًا",
+    "title": "هذا القسم متاح قريبًا",
+    "description": "هذه الصفحة مخطط لها في إصدار قادم من NOKI Operations. الإجراءات المقابلة موجودة بالفعل في NOKI API وسيتم ربطها بهذه الواجهة."
+  }
+}

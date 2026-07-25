@@ -1,0 +1,14 @@
+.alertText {
+  margin-block: 0;
+}
+
+.alertMeta {
+  margin-block: var(--noki-space-1) 0;
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-xs);
+}
+
+.fieldError {
+  color: var(--noki-color-semantic-danger);
+  font-size: var(--noki-font-size-xs);
+}

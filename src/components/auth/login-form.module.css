@@ -1,0 +1,13 @@
+.card {
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  padding: var(--noki-space-2);
+}
+
+.eyebrow {
+  font-size: var(--noki-font-size-sm);
+  font-weight: 600;
+  color: var(--noki-color-semantic-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

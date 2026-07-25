@@ -1,0 +1,32 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-1);
+}
+
+.brandName {
+  font-weight: 700;
+  font-size: var(--noki-font-size-md);
+  color: var(--noki-color-semantic-text-primary);
+}
+
+.brandScope {
+  font-size: var(--noki-font-size-xs);
+  color: var(--noki-color-semantic-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.navItem {
+  white-space: nowrap;
+}
+
+.footer {
+  font-size: var(--noki-font-size-xs);
+  color: var(--noki-color-semantic-text-secondary);
+}

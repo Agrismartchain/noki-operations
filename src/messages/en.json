@@ -1,0 +1,295 @@
+{
+  "metadata": {
+    "title": "NOKI Operations",
+    "description": "NOKI internal warehouse operations backoffice: receiving, inventory, picking, packing, quality control and shipping."
+  },
+  "common": {
+    "brand": "NOKI Operations",
+    "brandOrganization": "NOKI — Internal Operations",
+    "actions": {
+      "saving": "Saving..."
+    },
+    "pagination": {
+      "ariaLabel": "Pagination",
+      "next": "Next",
+      "previous": "Previous",
+      "rowsPerPage": "Rows per page"
+    }
+  },
+  "locale": {
+    "switcherLabel": "Language"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "switcherLabel": "Theme"
+  },
+  "shell": {
+    "openMenu": "Open menu"
+  },
+  "navigation": {
+    "landmarkLabel": "Main navigation",
+    "scopeNotice": "NOKI internal access only",
+    "dashboard": "Dashboard",
+    "inbound": "Inbound shipments",
+    "receiving": "Receiving",
+    "inventory": "Inventory",
+    "movements": "Stock movements",
+    "picking": "Picking",
+    "packing": "Packing",
+    "qc": "Quality control",
+    "shipping": "Shipping orders",
+    "incidents": "Operational incidents"
+  },
+  "errors": {
+    "forbiddenTitle": "Access denied",
+    "forbiddenDescription": "Your account does not have the permissions required to access this page."
+  },
+  "session": {
+    "expiredNotice": "Your session has expired. Please sign in again."
+  },
+  "auth": {
+    "branding": {
+      "eyebrow": "NOKI Operations",
+      "headline": "The NOKI network's warehouse backoffice",
+      "subtext": "Receiving, inventory, picking, packing, quality control and shipping — for authorized NOKI internal staff only."
+    },
+    "login": {
+      "welcomeTitle": "Sign in",
+      "subtitle": "Sign in with your internal NOKI Operations account.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitPending": "Signing in...",
+      "errorTitle": "Sign-in failed",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "passwordRequired": "Password is required."
+      },
+      "errors": {
+        "invalidCredentials": "Incorrect email or password.",
+        "configurationMissing": "Service configuration unavailable. Contact an administrator.",
+        "serviceUnavailable": "Service temporarily unavailable. Please try again.",
+        "timeout": "The service is taking too long to respond. Please try again.",
+        "rateLimited": "Too many attempts. Please try again shortly.",
+        "unexpected": "An unexpected error occurred."
+      }
+    },
+    "logout": {
+      "action": "Sign out"
+    }
+  },
+  "mutations": {
+    "successTitle": "Success",
+    "errorTitle": "Action failed",
+    "correlationId": "Reference",
+    "saved": "Changes saved.",
+    "errors": {
+      "validation": "Some fields are invalid.",
+      "forbidden": "You are not allowed to perform this action.",
+      "conflict": "This action conflicts with the resource's current state.",
+      "rateLimited": "Too many attempts. Please try again shortly.",
+      "unavailable": "NOKI API is temporarily unavailable.",
+      "unexpected": "An unexpected error occurred."
+    }
+  },
+  "inbound": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Inbound shipments",
+      "description": "Track supplier/seller shipments heading to your warehouses.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Inbound shipments"
+    },
+    "detail": {
+      "eyebrow": "Inbound shipment",
+      "title": "Shipment detail",
+      "description": "Expected lines, partial receiving and receipt history.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Shipment detail",
+      "sections": {
+        "summary": "Summary",
+        "actions": "Actions",
+        "lines": "Expected lines",
+        "receive": "Receive",
+        "receipts": "Receipt history"
+      },
+      "seller": "Seller",
+      "supplier": "Supplier"
+    },
+    "table": {
+      "ariaLabel": "Inbound shipments list"
+    },
+    "columns": {
+      "reference": "Reference",
+      "status": "Status",
+      "warehouse": "Warehouse",
+      "country": "Country",
+      "lines": "Lines",
+      "expectedArrival": "Expected arrival",
+      "actions": "Actions"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "READY": "Ready",
+      "SHIPPED": "Shipped",
+      "IN_TRANSIT": "In transit",
+      "PARTIALLY_RECEIVED": "Partially received",
+      "RECEIVED": "Received",
+      "CANCELLED": "Cancelled"
+    },
+    "actions": {
+      "view": "View",
+      "submit": "Submit",
+      "ship": "Mark shipped",
+      "cancel": "Cancel"
+    },
+    "empty": {
+      "title": "No inbound shipments",
+      "description": "No inbound shipment matches these filters."
+    },
+    "lines": {
+      "product": "Product",
+      "expected": "Expected",
+      "received": "Received",
+      "damaged": "Damaged"
+    },
+    "receive": {
+      "receivedQuantity": "Received quantity",
+      "damagedQuantity": "Damaged quantity",
+      "remaining": "Remaining: {count}"
+    }
+  },
+  "receiving": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Receiving",
+      "description": "History of posted receipts, with discrepancies and damaged quantities.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Receiving"
+    },
+    "table": {
+      "ariaLabel": "Receipt history"
+    },
+    "columns": {
+      "shipmentReference": "Shipment",
+      "warehouse": "Warehouse",
+      "seller": "Seller",
+      "postedAt": "Posted on",
+      "receivedQuantity": "Received quantity",
+      "damagedQuantity": "Damaged quantity",
+      "discrepancyQuantity": "Discrepancy"
+    },
+    "empty": {
+      "title": "No receipts",
+      "description": "No receipt matches these filters."
+    },
+    "actions": {
+      "review": "Review before confirming",
+      "confirmSubmit": "Confirm receipt"
+    },
+    "confirm": {
+      "description": "Review the quantities before confirming the receipt.",
+      "back": "Back"
+    },
+    "errors": {
+      "invalidLine": "Invalid quantity for this line."
+    }
+  },
+  "inventory": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Inventory",
+      "description": "Stock levels by warehouse, seller and product.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Inventory"
+    },
+    "table": {
+      "ariaLabel": "Stock levels"
+    },
+    "columns": {
+      "product": "Product",
+      "warehouse": "Warehouse",
+      "seller": "Seller",
+      "onHand": "On hand",
+      "available": "Available",
+      "reserved": "Reserved",
+      "defective": "Defective"
+    },
+    "empty": {
+      "title": "No stock",
+      "description": "No stock line matches these filters."
+    }
+  },
+  "movements": {
+    "list": {
+      "eyebrow": "Warehouse",
+      "title": "Stock movements",
+      "description": "History of stock movements: receipts, picking, adjustments, returns and damage.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Stock movements"
+    },
+    "table": {
+      "ariaLabel": "Stock movement history"
+    },
+    "columns": {
+      "date": "Date",
+      "product": "Product",
+      "type": "Type",
+      "warehouse": "Warehouse",
+      "quantity": "Quantity",
+      "actor": "Operator"
+    },
+    "types": {
+      "ADJUSTMENT_IN": "Adjustment in",
+      "ADJUSTMENT_OUT": "Adjustment out",
+      "INBOUND_RECEIPT": "Inbound receipt",
+      "RESERVATION_CREATED": "Reservation created",
+      "RESERVATION_RELEASED": "Reservation released",
+      "PICK": "Pick",
+      "RELEASE": "Release",
+      "TRANSFER": "Transfer",
+      "RETURN": "Return",
+      "DAMAGE": "Damage"
+    },
+    "empty": {
+      "title": "No movements",
+      "description": "No stock movement matches these filters."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Real-time overview of warehouse operations.",
+    "generatedAt": "Refreshed on {date}",
+    "sections": {
+      "warehouses": "Warehouses",
+      "inventory": "Inventory",
+      "fulfillment": "Order fulfillment",
+      "delivery": "Shipping",
+      "quality": "Quality"
+    },
+    "metrics": {
+      "warehousesTotal": "Warehouses",
+      "warehousesActive": "Active warehouses",
+      "inboundInTransit": "Inbound shipments in transit",
+      "inventoryOnHand": "On-hand quantity",
+      "inventoryAvailable": "Available quantity",
+      "inventoryReserved": "Reserved quantity",
+      "activeReservations": "Active reservations",
+      "fulfillmentOpen": "Open tasks",
+      "fulfillmentAssigned": "Assigned tasks",
+      "fulfillmentPicking": "Picking in progress",
+      "fulfillmentPacked": "Packed",
+      "qcPending": "QC pending",
+      "qcFailed": "QC failed",
+      "readyForDispatch": "Ready for dispatch",
+      "activeShipments": "Active shipments",
+      "openIncidents": "Open incidents"
+    }
+  },
+  "comingSoon": {
+    "eyebrow": "Coming soon",
+    "title": "This section is coming soon",
+    "description": "This page is planned for an upcoming NOKI Operations iteration. The corresponding actions already exist on NOKI API and will be wired to this interface."
+  }
+}
