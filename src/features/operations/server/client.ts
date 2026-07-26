@@ -81,6 +81,8 @@ export type OpsShipmentsQuery = {
   organizationId?: string;
   countryId?: string;
   warehouseId?: string;
+  shipmentId?: string;
+  fulfillmentTaskId?: string;
   search?: string;
   status?: DeliveryShipmentStatus;
 };

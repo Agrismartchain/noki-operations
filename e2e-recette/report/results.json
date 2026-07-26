@@ -2,7 +2,7 @@
   "config": {
     "argv": [
       "/home/wakama/.nvm/versions/node/v24.18.0/bin/node",
-      "/home/wakama/dev/noki-service/noki-operations/node_modules/.pnpm/@playwright+test@1.61.1/node_modules/@playwright/test/cli.js",
+      "/home/wakama/dev/noki-service/noki-operations/node_modules/@playwright/test/cli.js",
       "test",
       "--config=playwright.recette.config.ts"
     ],
@@ -94,12 +94,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6897,
+                      "duration": 5609,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-25T12:20:37.652Z",
+                      "startTime": "2026-07-26T07:47:06.528Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -128,12 +128,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2698,
+                      "duration": 1941,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-25T12:20:44.632Z",
+                      "startTime": "2026-07-26T07:47:12.206Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -162,12 +162,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9724,
+                      "duration": 6966,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-25T12:20:47.348Z",
+                      "startTime": "2026-07-26T07:47:14.157Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -183,13 +183,302 @@
           ]
         }
       ]
+    },
+    {
+      "title": "01-fulfillment-shipping-incidents.spec.ts",
+      "file": "01-fulfillment-shipping-incidents.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "noki-operations fulfillment, shipping and incidents (real stack)",
+          "file": "01-fulfillment-shipping-incidents.spec.ts",
+          "line": 263,
+          "column": 6,
+          "specs": [
+            {
+              "title": "picking, packing, QC, shipping and incidents routes render real workflows with no coming-soon placeholders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3371,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:21.142Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-e851d81ee1bbf128eb81",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 264,
+              "column": 3
+            },
+            {
+              "title": "list -> detail flows are wired for picking, packing, QC and shipping when demo data exists",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3186,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:27.913Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-f62994c914ae6ec719df",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 275,
+              "column": 3
+            },
+            {
+              "title": "QC fail blocks shipping and shipping rows expose QC/COD/driver context",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1973,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:31.110Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-df69e0f22f0914c43aef",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 284,
+              "column": 3
+            },
+            {
+              "title": "packing metadata is entered through the UI, persisted by the API and QC PASS unlocks the task",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3222,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:33.093Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-1bf6a9a9c948f8b7d39e",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 344,
+              "column": 3
+            },
+            {
+              "title": "mobile 390px: topbar controls remain reachable with no horizontal overflow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3299,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:36.323Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-bbce3d62b3f74769c36e",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 420,
+              "column": 3
+            },
+            {
+              "title": "app-level denial blocks non-operations accounts before shell navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1355,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:39.630Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-8052082f711d7db6c671",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 433,
+              "column": 3
+            },
+            {
+              "title": "authorization policy: operations accepted, finance denied, auditor read-only and super-admin accepted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4315,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:40.996Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-0a93096862bf5524ca0b",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 440,
+              "column": 3
+            },
+            {
+              "title": "screenshots: workflow finals, mobile, dark mode and Arabic RTL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6737,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-26T07:47:45.322Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c85f7c7f2cb9f7e0adc3-6781e0134eb3218ecdf1",
+              "file": "01-fulfillment-shipping-incidents.spec.ts",
+              "line": 464,
+              "column": 3
+            }
+          ]
+        }
+      ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-25T12:20:37.133Z",
-    "duration": 20019.017,
-    "expected": 3,
+    "startTime": "2026-07-26T07:47:06.180Z",
+    "duration": 42567.189000000006,
+    "expected": 11,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

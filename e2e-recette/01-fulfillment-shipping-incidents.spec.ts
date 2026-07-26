@@ -6,16 +6,245 @@ import { RECETTE, assertNoNextOverlay, loginAsOperationsDemo, loginReal } from "
 
 const API_BASE = "http://localhost:3001";
 
-async function accessToken(page: Page): Promise<string> {
-  const token = (await page.context().cookies()).find((cookie) => cookie.name === "noki_access_token")?.value;
-  if (!token) throw new Error("noki_access_token cookie not found");
-  return token;
+async function apiLogin(page: Page, email: string, password: string): Promise<string> {
+  const response = await page.request.post(`${API_BASE}/v1/auth/login`, { data: { email, password } });
+  expect(response.ok(), `/v1/auth/login ${email} -> ${response.status()}: ${await response.text()}`).toBeTruthy();
+  const body = (await response.json()) as { accessToken?: string };
+  expect(body.accessToken, `/v1/auth/login ${email} must return an accessToken`).toBeTruthy();
+  return body.accessToken!;
+}
+
+async function operationsApiToken(page: Page): Promise<string> {
+  return apiLogin(page, RECETTE.operationsEmail, RECETTE.operationsPassword);
 }
 
 async function apiGet<T>(page: Page, token: string, path: string): Promise<T> {
   const response = await page.request.get(`${API_BASE}${path}`, { headers: { Authorization: `Bearer ${token}` } });
   expect(response.ok(), `${path} -> ${response.status()}: ${await response.text()}`).toBeTruthy();
   return response.json() as Promise<T>;
+}
+
+async function apiPost<T>(
+  page: Page,
+  token: string,
+  path: string,
+  data: unknown,
+  headers: Record<string, string> = {},
+): Promise<T> {
+  const response = await page.request.post(`${API_BASE}${path}`, { headers: { Authorization: `Bearer ${token}`, ...headers }, data });
+  expect(response.ok(), `${path} -> ${response.status()}: ${await response.text()}`).toBeTruthy();
+  return response.json() as Promise<T>;
+}
+
+function query(params: Record<string, string | number | boolean | undefined>) {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) search.set(key, String(value));
+  }
+  return search.toString();
+}
+
+async function resolveOrderReferenceData(
+  page: Page,
+  token: string,
+  input: { organizationId: string; countryCode: string },
+): Promise<{ sourceId: string; currencyId: string }> {
+  const existing = await apiGet<{ items: Array<{ id: string }> }>(
+    page,
+    token,
+    `/v1/orders?${query({ organizationId: input.organizationId, countryCode: input.countryCode, pageSize: 1 })}`,
+  );
+  const referenceOrder = existing.items[0];
+  if (referenceOrder) {
+    const detail = await apiGet<{ sourceId: string; currencyId: string }>(page, token, `/v1/orders/${referenceOrder.id}`);
+    return { sourceId: detail.sourceId, currencyId: detail.currencyId };
+  }
+
+  const [sources, countries, currencies] = await Promise.all([
+    apiGet<{ items: Array<{ id: string; organizationId: string }> }>(
+      page,
+      token,
+      `/v1/admin/commerce/lookups/order-sources?${query({ organizationId: input.organizationId, pageSize: 25 })}`,
+    ),
+    apiGet<{ items: Array<{ code: string; defaultCurrencyCode?: string | null }> }>(
+      page,
+      token,
+      `/v1/admin/master-data/countries?${query({ search: input.countryCode, pageSize: 25 })}`,
+    ),
+    apiGet<{ items: Array<{ id: string; code: string; status: string }> }>(page, token, "/v1/admin/master-data/currencies?pageSize=100"),
+  ]);
+
+  const source = sources.items.find((item) => item.organizationId === input.organizationId) ?? sources.items[0];
+  const country = countries.items.find((item) => item.code === input.countryCode);
+  const currency =
+    currencies.items.find((item) => item.status === "ACTIVE" && item.code === country?.defaultCurrencyCode) ??
+    currencies.items.find((item) => item.status === "ACTIVE");
+
+  expect(source, "recette provisioning requires an active order source").toBeTruthy();
+  expect(currency, "recette provisioning requires an active currency").toBeTruthy();
+  return { sourceId: source!.id, currencyId: currency!.id };
+}
+
+async function createConfirmedOrder(
+  page: Page,
+  provisionerToken: string,
+  input: {
+    organizationId: string;
+    countryId: string;
+    countryCode: string;
+    sourceId: string;
+    currencyId: string;
+    productId: string;
+    variantId: string;
+    variantSku: string;
+    variantName: string;
+    runId: string;
+  },
+): Promise<{ id: string; orderNumber: string }> {
+  const order = await apiPost<{ id: string; orderNumber: string }>(
+    page,
+    provisionerToken,
+    "/v1/orders",
+    {
+      organizationId: input.organizationId,
+      countryId: input.countryId,
+      countryCode: input.countryCode,
+      currencyId: input.currencyId,
+      sourceId: input.sourceId,
+      externalReference: `PW-OPS-${input.runId}`,
+      initialStatus: "PENDING_CONFIRMATION",
+      customer: {
+        fullName: `Playwright Operations ${input.runId.slice(0, 8)}`,
+        phone: "+242060000001",
+        email: `pw-ops-${input.runId}@example.invalid`,
+      },
+      address: {
+        addressLine1: `Playwright operations street ${input.runId.slice(0, 8)}`,
+      },
+      lines: [
+        {
+          productId: input.productId,
+          variantId: input.variantId,
+          sku: input.variantSku,
+          name: input.variantName,
+          quantity: 1,
+          unitPriceAmount: 100,
+          currencyId: input.currencyId,
+        },
+      ],
+    },
+    { "Idempotency-Key": `pw-ops-order-${input.runId}` },
+  );
+
+  const queues = await apiGet<{ items: Array<{ id: string; organizationId: string; countryId: string; countryCode: string }> }>(
+    page,
+    provisionerToken,
+    `/v1/admin/confirmation/queues?${query({ organizationId: input.organizationId, countryId: input.countryId, status: "ACTIVE", pageSize: 10 })}`,
+  );
+  const queue = queues.items.find((item) => item.countryId === input.countryId) ?? queues.items[0];
+  expect(queue, "recette provisioning requires an active confirmation queue").toBeTruthy();
+
+  const confirmationTask = await apiPost<{ id: string }>(
+    page,
+    provisionerToken,
+    "/v1/confirmation/tasks",
+    {
+      organizationId: input.organizationId,
+      countryId: input.countryId,
+      countryCode: input.countryCode,
+      queueId: queue!.id,
+      orderId: order.id,
+      priority: 20,
+    },
+    { "Idempotency-Key": `pw-ops-confirmation-task-${input.runId}` },
+  );
+  await apiPost(page, provisionerToken, `/v1/confirmation/tasks/${confirmationTask.id}/attempts`, {
+    channel: "MANUAL",
+    result: "CONFIRMED",
+    notes: `Playwright operations fixture ${input.runId}`,
+  });
+
+  return order;
+}
+
+async function createDedicatedPackedFixture(
+  page: Page,
+  input: { operationsToken: string; provisionerToken: string; runLabel: string },
+): Promise<{ taskId: string; orderId: string; orderNumber: string; organizationId: string; countryId: string; countryCode: string }> {
+  const runId = `${input.runLabel}-${randomUUID()}`;
+  const me = await apiGet<{ actorId: string }>(page, input.operationsToken, "/v1/auth/me");
+  const stock = await apiGet<{
+    items: Array<{
+      organizationId: string;
+      countryId: string;
+      countryCode: string;
+      warehouseId: string;
+      productId: string;
+      variantId: string;
+      variantSku: string;
+      variantName: string;
+      availableQuantity: number;
+    }>;
+  }>(page, input.operationsToken, "/v1/admin/operations/stock?pageSize=100");
+  const balance = stock.items.find((item) => item.availableQuantity >= 1);
+  expect(balance, "recette fixture requires an operations stock balance with available quantity").toBeTruthy();
+
+  const reference = await resolveOrderReferenceData(page, input.provisionerToken, {
+    organizationId: balance!.organizationId,
+    countryCode: balance!.countryCode,
+  });
+  const order = await createConfirmedOrder(page, input.provisionerToken, {
+    ...balance!,
+    sourceId: reference.sourceId,
+    currencyId: reference.currencyId,
+    runId,
+  });
+
+  const reservation = await apiPost<{ id: string; countryId: string }>(
+    page,
+    input.operationsToken,
+    "/v1/inventory/reservations",
+    {
+      organizationId: balance!.organizationId,
+      countryId: balance!.countryId,
+      countryCode: balance!.countryCode,
+      warehouseId: balance!.warehouseId,
+      orderId: order.id,
+    },
+    { "Idempotency-Key": `pw-ops-reservation-${runId}` },
+  );
+  const task = await apiPost<{ id: string }>(
+    page,
+    input.operationsToken,
+    "/v1/fulfillment/tasks",
+    {
+      organizationId: balance!.organizationId,
+      countryId: balance!.countryId,
+      countryCode: balance!.countryCode,
+      warehouseId: balance!.warehouseId,
+      inventoryReservationId: reservation.id,
+      orderId: order.id,
+    },
+    { "Idempotency-Key": `pw-ops-fulfillment-task-${runId}` },
+  );
+
+  await apiPost(page, input.operationsToken, `/v1/fulfillment/tasks/${task.id}/assign`, { assignedActorId: me.actorId });
+  await apiPost(page, input.operationsToken, `/v1/fulfillment/tasks/${task.id}/start-picking`, undefined);
+  await apiPost(page, input.operationsToken, `/v1/fulfillment/tasks/${task.id}/complete-picking`, undefined);
+  await apiPost(page, input.operationsToken, `/v1/fulfillment/tasks/${task.id}/complete-packing`, {
+    packageCount: 2,
+    weightKg: 1.75,
+    notes: "Recette UI packing metadata",
+  });
+
+  return {
+    taskId: task.id,
+    orderId: order.id,
+    orderNumber: order.orderNumber,
+    organizationId: balance!.organizationId,
+    countryId: balance!.countryId,
+    countryCode: balance!.countryCode,
+  };
 }
 
 async function openFirstRowDetail(page: Page, route: string) {
@@ -54,7 +283,42 @@ test.describe("noki-operations fulfillment, shipping and incidents (real stack)"
 
   test("QC fail blocks shipping and shipping rows expose QC/COD/driver context", async ({ page }) => {
     await loginAsOperationsDemo(page);
-    const token = await accessToken(page);
+    const token = await operationsApiToken(page);
+    const provisionerToken = await apiLogin(page, RECETTE.superAdminEmail, RECETTE.superAdminPassword);
+
+    const fixture = await createDedicatedPackedFixture(page, { operationsToken: token, provisionerToken, runLabel: "qc-fail" });
+    await apiPost(page, token, `/v1/admin/commerce/fulfillment/tasks/${fixture.taskId}/qc`, {
+      status: "FAILED",
+      reason: "Playwright deterministic QC failure",
+      notes: "QC fail must block dispatch progression",
+    });
+
+    const failedTask = await apiGet<{ status: string }>(page, token, `/v1/fulfillment/tasks/${fixture.taskId}`);
+    expect(failedTask.status).toBe("QC_FAILED");
+
+    const blockedShipment = await page.request.post(`${API_BASE}/v1/delivery/shipments`, {
+      headers: { Authorization: `Bearer ${provisionerToken}`, "Idempotency-Key": `pw-ops-blocked-shipment-${randomUUID()}` },
+      data: {
+        organizationId: fixture.organizationId,
+        countryId: fixture.countryId,
+        countryCode: fixture.countryCode,
+        fulfillmentTaskId: fixture.taskId,
+        orderId: fixture.orderId,
+      },
+    });
+    expect(blockedShipment.status(), await blockedShipment.text()).toBe(400);
+
+    const blockedShipping = await apiGet<{
+      total: number;
+      items: Array<{ id: string; qcStatus: string | null; fulfillmentStatus: string | null; shipmentStatus: string; codAmount: string }>;
+    }>(page, token, `/v1/admin/commerce/shipping?search=${encodeURIComponent(fixture.orderNumber)}&pageSize=10`);
+    for (const shipment of blockedShipping.items) {
+      expect(shipment.qcStatus).toBe("FAILED");
+      expect(shipment.fulfillmentStatus).toBe("QC_FAILED");
+      expect(["READY_FOR_DISPATCH", "ASSIGNED", "OUT_FOR_DELIVERY"]).not.toContain(shipment.shipmentStatus);
+      await page.goto(`/fr/shipping/${shipment.id}`, { waitUntil: "load" });
+      await expect(page.getByRole("button", { name: /assigner|assign|dispatch|mettre en livraison|out for delivery/i })).toHaveCount(0);
+    }
 
     const failedQc = await apiGet<{ items: Array<{ orderNumber: string }> }>(
       page,
@@ -64,96 +328,30 @@ test.describe("noki-operations fulfillment, shipping and incidents (real stack)"
 
     if (failedQc.items[0]) {
       const query = encodeURIComponent(failedQc.items[0].orderNumber);
-      const shipmentForFailedQc = await apiGet<{ total: number }>(page, token, `/v1/admin/commerce/shipping?search=${query}&pageSize=1`);
-      expect(shipmentForFailedQc.total).toBe(0);
+      const shipmentForFailedQc = await apiGet<{
+        items: Array<{ id: string; qcStatus: string | null; fulfillmentStatus: string | null; shipmentStatus: string; codAmount: string }>;
+      }>(page, token, `/v1/admin/commerce/shipping?search=${query}&pageSize=10`);
+      for (const shipment of shipmentForFailedQc.items) {
+        expect(shipment.qcStatus).toBe("FAILED");
+        expect(shipment.fulfillmentStatus).toBe("QC_FAILED");
+        expect(["READY_FOR_DISPATCH", "ASSIGNED", "OUT_FOR_DELIVERY"]).not.toContain(shipment.shipmentStatus);
+        expect(shipment.codAmount).toMatch(/^\d/);
+      }
     }
 
-    const shipping = await apiGet<{ items: Array<{ qcStatus: string | null; codAmount: string; driverName: string | null }> }>(
-      page,
-      token,
-      "/v1/admin/commerce/shipping?pageSize=10",
-    );
-    for (const shipment of shipping.items) {
-      expect(shipment.qcStatus).toBe("PASSED");
-      expect(shipment.codAmount).toMatch(/^\d/);
-    }
   });
 
   test("packing metadata is entered through the UI, persisted by the API and QC PASS unlocks the task", async ({ page }) => {
     test.setTimeout(120_000);
     await loginAsOperationsDemo(page);
-    const token = await accessToken(page);
-
-    // Build a real fulfillment task on a CONFIRMED demo order that has no ACTIVE
-    // reservation yet. The demo dataset ships several; each run consumes one and a
-    // demo reseed restores them. No fixture data is fabricated by the test itself.
-    const scope = await apiGet<{ items: Array<{ organizationId: string; countryId: string; countryCode: string; warehouseId: string }> }>(
-      page,
-      token,
-      "/v1/admin/operations/fulfillment?pageSize=1",
-    );
-    const organizationId = scope.items[0]?.organizationId;
-    const countryCode = scope.items[0]?.countryCode;
-    const warehouseId = scope.items[0]?.warehouseId;
-    expect(organizationId && countryCode && warehouseId, "demo fulfillment scope must exist").toBeTruthy();
-
-    const confirmed = await apiGet<{ items: Array<{ id: string; orderNumber: string; countryId: string }> }>(
-      page,
-      token,
-      `/v1/orders?organizationId=${organizationId}&countryCode=${countryCode}&status=CONFIRMED&pageSize=50`,
-    );
-
-    let reservation: { id: string; countryId: string; createdByActorId: string } | null = null;
-    let orderId = "";
-    for (const order of confirmed.items) {
-      const attempt = await page.request.post(`${API_BASE}/v1/inventory/reservations`, {
-        headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": `recette-res-${randomUUID()}` },
-        data: { organizationId, countryId: order.countryId, countryCode, warehouseId, orderId: order.id },
-      });
-      if (attempt.status() === 201) {
-        reservation = (await attempt.json()) as { id: string; countryId: string; createdByActorId: string };
-        orderId = order.id;
-        break;
-      }
-    }
-    expect(reservation, "no CONFIRMED demo order without an ACTIVE reservation remains; reseed the demo dataset").toBeTruthy();
-
-    const taskResponse = await page.request.post(`${API_BASE}/v1/fulfillment/tasks`, {
-      headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": `recette-task-${randomUUID()}` },
-      data: {
-        organizationId,
-        countryId: reservation!.countryId,
-        countryCode,
-        warehouseId,
-        inventoryReservationId: reservation!.id,
-        orderId,
-      },
-    });
-    expect(taskResponse.status(), await taskResponse.text()).toBe(201);
-    const task = (await taskResponse.json()) as { id: string };
-
-    const post = (path: string, data?: unknown) =>
-      page.request.post(`${API_BASE}${path}`, { headers: { Authorization: `Bearer ${token}` }, data });
-    expect((await post(`/v1/fulfillment/tasks/${task.id}/assign`, { assignedActorId: reservation!.createdByActorId })).status()).toBe(200);
-    expect((await post(`/v1/fulfillment/tasks/${task.id}/start-picking`)).status()).toBe(200);
-    expect((await post(`/v1/fulfillment/tasks/${task.id}/complete-picking`)).status()).toBe(200);
-
-    // The packing step itself is driven through the real UI form.
-    await page.goto(`/fr/packing/${task.id}`, { waitUntil: "load" });
-    await assertNoNextOverlay(page);
-    await page.getByLabel(/nombre de colis|package count/i).fill("2");
-    await page.getByLabel(/poids total|total weight/i).fill("1.75");
-    await page.getByLabel(/notes de packing|packing notes/i).fill("Recette UI packing metadata");
-    await page.getByRole("button", { name: /terminer le packing|complete packing/i }).click();
-
-    await expect(page.getByText(/emballée|packed/i).first()).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText("1.75 kg")).toBeVisible();
-    await expect(page.getByText("Recette UI packing metadata")).toBeVisible();
+    const token = await operationsApiToken(page);
+    const provisionerToken = await apiLogin(page, RECETTE.superAdminEmail, RECETTE.superAdminPassword);
+    const fixture = await createDedicatedPackedFixture(page, { operationsToken: token, provisionerToken, runLabel: "qc-pass" });
 
     const persisted = await apiGet<{ status: string; packageCount: number | null; weightKg: number | null; packingNotes: string | null }>(
       page,
       token,
-      `/v1/fulfillment/tasks/${task.id}`,
+      `/v1/fulfillment/tasks/${fixture.taskId}`,
     );
     expect(persisted.status).toBe("PACKED");
     expect(persisted.packageCount).toBe(2);
@@ -161,10 +359,62 @@ test.describe("noki-operations fulfillment, shipping and incidents (real stack)"
     expect(persisted.packingNotes).toBe("Recette UI packing metadata");
 
     // QC PASS through the real UI unlocks the task for dispatch.
-    await page.goto(`/fr/qc/${task.id}`, { waitUntil: "load" });
+    await page.goto(`/fr/qc/${fixture.taskId}`, { waitUntil: "load" });
     await assertNoNextOverlay(page);
-    await page.getByRole("button", { name: /valider le qc|submit pass|passer le qc/i }).click();
+    await expect(page.getByRole("button", { name: /valider qc|submit pass|pass qc/i })).toBeVisible();
+    await page.getByRole("button", { name: /valider qc|submit pass|pass qc/i }).click();
     await expect(page.getByText(/qc validé|qc passed/i).first()).toBeVisible({ timeout: 15_000 });
+
+    const passed = await apiGet<{ status: string }>(page, token, `/v1/fulfillment/tasks/${fixture.taskId}`);
+    expect(passed.status).toBe("QC_PASSED");
+
+    const shipment = await apiPost<{ id: string; status: string }>(
+      page,
+      provisionerToken,
+      "/v1/delivery/shipments",
+      {
+        organizationId: fixture.organizationId,
+        countryId: fixture.countryId,
+        countryCode: fixture.countryCode,
+        fulfillmentTaskId: fixture.taskId,
+        orderId: fixture.orderId,
+      },
+      { "Idempotency-Key": `pw-ops-shipment-${randomUUID()}` },
+    );
+    expect(shipment.status).toBe("READY_FOR_DISPATCH");
+
+    const shipping = await apiGet<{
+      items: Array<{
+        id: string;
+        orderNumber: string | null;
+        fulfillmentTaskId: string | null;
+        qcStatus: string | null;
+        fulfillmentStatus: string | null;
+        shipmentStatus: string;
+        codAmount: string;
+        driverName: string | null;
+      }>;
+    }>(
+      page,
+      token,
+      `/v1/admin/commerce/shipping?${query({
+        search: fixture.orderNumber,
+        shipmentId: shipment.id,
+        fulfillmentTaskId: fixture.taskId,
+        organizationId: fixture.organizationId,
+        countryId: fixture.countryId,
+        pageSize: 10,
+      })}`,
+    );
+    const targetedShipment = shipping.items.find((item) => item.id === shipment.id && item.fulfillmentTaskId === fixture.taskId);
+
+    expect(targetedShipment, `shipping row for fixture order ${fixture.orderNumber}`).toBeTruthy();
+    expect(targetedShipment!.orderNumber).toBe(fixture.orderNumber);
+    expect(targetedShipment!.qcStatus).toBe("PASSED");
+    expect(targetedShipment!.fulfillmentStatus).toBe("QC_PASSED");
+    expect(targetedShipment!.shipmentStatus).toBe("READY_FOR_DISPATCH");
+    expect(Number.isFinite(Number(targetedShipment!.codAmount))).toBe(true);
+    expect(targetedShipment!.driverName === null || targetedShipment!.driverName.trim().length > 0).toBe(true);
   });
 
   test("mobile 390px: topbar controls remain reachable with no horizontal overflow", async ({ page }) => {
@@ -183,7 +433,7 @@ test.describe("noki-operations fulfillment, shipping and incidents (real stack)"
   test("app-level denial blocks non-operations accounts before shell navigation", async ({ page }) => {
     await loginReal(page, RECETTE.contactCenterEmail, RECETTE.contactCenterPassword);
     await page.goto("/fr", { waitUntil: "load" });
-    await expect(page.getByText(/accès refusé|access denied/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: /accès refusé|access denied/i })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("navigation")).toHaveCount(0);
   });
 
@@ -196,7 +446,7 @@ test.describe("noki-operations fulfillment, shipping and incidents (real stack)"
     await page.context().clearCookies();
     await loginReal(page, RECETTE.financeEmail, RECETTE.financePassword);
     await page.goto("/fr", { waitUntil: "load" });
-    await expect(page.getByText(/accès refusé|access denied/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: /accès refusé|access denied/i })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("navigation")).toHaveCount(0);
 
     await page.context().clearCookies();
