@@ -12,8 +12,8 @@ importers:
         specifier: file:../noki-design-system
         version: file:../noki-design-system(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@agrismartchain/noki-shared-contracts':
-        specifier: file:../noki-shared-contracts
-        version: file:../noki-shared-contracts
+        specifier: 0.27.0
+        version: 0.27.0
       lucide-react:
         specifier: 1.25.0
         version: 1.25.0(react@19.2.4)
@@ -82,8 +82,8 @@ packages:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@agrismartchain/noki-shared-contracts@file:../noki-shared-contracts':
-    resolution: {directory: ../noki-shared-contracts, type: directory}
+  '@agrismartchain/noki-shared-contracts@0.27.0':
+    resolution: {integrity: sha512-5lsi3k/QnLS1v2fd7Wcwxk+3koiQN1g0SPwicMP2134IgheB43MR+FtrW4xZ49be/A9FR41ShH8Uaxoswc2h/w==, tarball: https://npm.pkg.github.com/download/@agrismartchain/noki-shared-contracts/0.27.0/9d27d38389b2e8f2f57a9c47b634602102df7c6d}
     engines: {node: '>=24.0.0 <25', pnpm: '>=10.23.0'}
 
   '@asamuzakjp/css-color@5.1.11':
@@ -2865,7 +2865,7 @@ snapshots:
       react-dom: 19.2.4(react@19.2.4)
       recharts: 2.15.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
-  '@agrismartchain/noki-shared-contracts@file:../noki-shared-contracts':
+  '@agrismartchain/noki-shared-contracts@0.27.0':
     dependencies:
       openapi-fetch: 0.17.0
 
