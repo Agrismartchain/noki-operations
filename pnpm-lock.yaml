@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@agrismartchain/noki-design-system':
-        specifier: file:../noki-design-system
-        version: file:../noki-design-system(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 0.2.0
+        version: 0.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@agrismartchain/noki-shared-contracts':
         specifier: 0.27.0
         version: 0.27.0
@@ -75,8 +75,8 @@ packages:
   '@adobe/css-tools@4.5.0':
     resolution: {integrity: sha512-6OzddxPio9UiWTCemp4N8cYLV2ZN1ncRnV1cVGtve7dhPOtRkleRyx32GQCYSwDYgaHU3USMm84tNsvKzRCa1Q==}
 
-  '@agrismartchain/noki-design-system@file:../noki-design-system':
-    resolution: {directory: ../noki-design-system, type: directory}
+  '@agrismartchain/noki-design-system@0.2.0':
+    resolution: {integrity: sha512-a5Zclj6GqD/pIZnmGwePnhFV2DzT2+TwK9ZGC3+bZQFvCYliJ/0zxbFQw1QBwT9jOZ/c4kgZjxtn1SBrBMrreg==, tarball: https://npm.pkg.github.com/download/@agrismartchain/noki-design-system/0.2.0/2c3bafb19d9aa3221eb47cce296d0089a7bccd90}
     engines: {node: '>=24.0.0 <25', pnpm: '>=10.23.0'}
     peerDependencies:
       react: ^19.0.0
@@ -2855,7 +2855,7 @@ snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@agrismartchain/noki-design-system@file:../noki-design-system(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@agrismartchain/noki-design-system@0.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@internationalized/date': 3.12.2
       '@tanstack/react-table': 8.21.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
