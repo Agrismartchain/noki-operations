@@ -214,7 +214,16 @@
       "onHand": "On hand",
       "available": "Available",
       "reserved": "Reserved",
-      "defective": "Defective"
+      "defective": "Defective",
+      "adjust": "Adjust"
+    },
+    "adjust": {
+      "type": "Direction",
+      "typeIn": "Increase (in)",
+      "typeOut": "Decrease (out)",
+      "quantity": "Quantity",
+      "reason": "Reason",
+      "submit": "Adjust stock"
     },
     "empty": {
       "title": "No stock",

@@ -214,7 +214,16 @@
       "onHand": "En stock",
       "available": "Disponible",
       "reserved": "Réservé",
-      "defective": "Défectueux"
+      "defective": "Défectueux",
+      "adjust": "Ajuster"
+    },
+    "adjust": {
+      "type": "Sens",
+      "typeIn": "Augmenter (entrée)",
+      "typeOut": "Diminuer (sortie)",
+      "quantity": "Quantité",
+      "reason": "Motif",
+      "submit": "Ajuster le stock"
     },
     "empty": {
       "title": "Aucun stock",

@@ -274,3 +274,27 @@ export async function listInventory(query: OpsInventoryQuery, context: OpsContex
 export async function listStockMovements(query: OpsMovementsQuery, context: OpsContext): Promise<PageResult<StockMovementRecord>> {
   return unwrapList(await serverClient(context).GET("/v1/admin/commerce/inventory/movements", { params: { query } }));
 }
+
+export interface AdjustStockInput {
+  idempotencyKey: string;
+  organizationId: string;
+  countryId: string;
+  countryCode: string;
+  warehouseId: string;
+  productId: string;
+  variantId: string;
+  type: "ADJUSTMENT_IN" | "ADJUSTMENT_OUT";
+  quantity: number;
+  reason?: string;
+}
+
+/** Not under /v1/admin/commerce: this is the core inventory module's write endpoint (InventoryController.adjustStock), reused as-is -- Operations is the only actor with `inventory.stock.adjust`, Sellers never get this capability. */
+export async function adjustStock(input: AdjustStockInput, context: OpsContext): Promise<void> {
+  const { idempotencyKey, ...body } = input;
+  unwrapDirect(
+    await serverClient(context).POST("/v1/inventory/stock/adjustments", {
+      params: { header: { "Idempotency-Key": idempotencyKey } },
+      body,
+    }),
+  );
+}

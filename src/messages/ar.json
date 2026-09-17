@@ -214,7 +214,16 @@
       "onHand": "المتوفر",
       "available": "المتاح",
       "reserved": "المحجوز",
-      "defective": "التالف"
+      "defective": "التالف",
+      "adjust": "تسوية"
+    },
+    "adjust": {
+      "type": "الاتجاه",
+      "typeIn": "زيادة (دخول)",
+      "typeOut": "تخفيض (خروج)",
+      "quantity": "الكمية",
+      "reason": "السبب",
+      "submit": "تسوية المخزون"
     },
     "empty": {
       "title": "لا يوجد مخزون",
