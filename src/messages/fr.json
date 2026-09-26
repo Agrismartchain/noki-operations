@@ -529,7 +529,10 @@
       "actions": "Actions"
     },
     "actions": {
-      "view": "Voir"
+      "view": "Voir",
+      "reviewAssign": "Vérifier l'assignation",
+      "confirmAssign": "Confirmer l'assignation",
+      "outForDelivery": "Marquer en livraison"
     },
     "empty": {
       "title": "Aucune expédition",
@@ -563,7 +566,8 @@
     },
     "detail": {
       "sections": {
-        "summary": "Détail livraison"
+        "summary": "Détail livraison",
+        "actions": "Actions"
       },
       "organization": "Vendeur / organisation",
       "destination": "Destination",
@@ -580,7 +584,13 @@
       "outForDeliveryAt": "Sortie le",
       "deliveredAt": "Livrée le",
       "failedAt": "Échec le",
-      "updatedAt": "Mis à jour le"
+      "updatedAt": "Mis à jour le",
+      "assignDriverLabel": "Assigner un chauffeur",
+      "assignDriverPlaceholder": "Choisir un chauffeur disponible",
+      "driverOption": "{name} ({code}) — {active} livraison(s) en cours",
+      "noEligibleDrivers": "Aucun chauffeur actif disponible dans ce pays pour le moment.",
+      "confirmAssignDescription": "Confirmer l'assignation à {driver} ?",
+      "confirmBack": "Retour"
     }
   },
   "incidents": {

@@ -529,7 +529,10 @@
       "actions": "Actions"
     },
     "actions": {
-      "view": "View"
+      "view": "View",
+      "reviewAssign": "Review assignment",
+      "confirmAssign": "Confirm assignment",
+      "outForDelivery": "Mark out for delivery"
     },
     "empty": {
       "title": "No shipment",
@@ -563,7 +566,8 @@
     },
     "detail": {
       "sections": {
-        "summary": "Shipment detail"
+        "summary": "Shipment detail",
+        "actions": "Actions"
       },
       "organization": "Seller / organization",
       "destination": "Destination",
@@ -580,7 +584,13 @@
       "outForDeliveryAt": "Out for delivery at",
       "deliveredAt": "Delivered at",
       "failedAt": "Failed at",
-      "updatedAt": "Updated at"
+      "updatedAt": "Updated at",
+      "assignDriverLabel": "Assign a driver",
+      "assignDriverPlaceholder": "Choose an available driver",
+      "driverOption": "{name} ({code}) — {active} active shipment(s)",
+      "noEligibleDrivers": "No active driver available in this country right now.",
+      "confirmAssignDescription": "Confirm assignment to {driver}?",
+      "confirmBack": "Back"
     }
   },
   "incidents": {

@@ -10,10 +10,24 @@
  * derived from `components["schemas"]`.
  */
 
-export const INBOUND_STATUSES = ["DRAFT", "READY", "SHIPPED", "IN_TRANSIT", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED"] as const;
+export const INBOUND_STATUSES = [
+  "DRAFT",
+  "READY",
+  "SHIPPED",
+  "IN_TRANSIT",
+  "PARTIALLY_RECEIVED",
+  "RECEIVED",
+  "CANCELLED",
+] as const;
 export type InboundStatus = (typeof INBOUND_STATUSES)[number];
 
-export const STOCK_STATES = ["AVAILABLE", "RESERVED", "DEFECTIVE", "LOW_STOCK", "OUT_OF_STOCK"] as const;
+export const STOCK_STATES = [
+  "AVAILABLE",
+  "RESERVED",
+  "DEFECTIVE",
+  "LOW_STOCK",
+  "OUT_OF_STOCK",
+] as const;
 export type StockState = (typeof STOCK_STATES)[number];
 
 export const STOCK_MOVEMENT_TYPES = [
@@ -46,7 +60,12 @@ export type FulfillmentTaskStatus = (typeof FULFILLMENT_TASK_STATUSES)[number];
 export const INCIDENT_STATUSES = ["OPEN", "RESOLVED"] as const;
 export type IncidentStatus = (typeof INCIDENT_STATUSES)[number];
 
-export const INCIDENT_TYPES = ["DELAY", "VEHICLE_ISSUE", "SAFETY", "OTHER"] as const;
+export const INCIDENT_TYPES = [
+  "DELAY",
+  "VEHICLE_ISSUE",
+  "SAFETY",
+  "OTHER",
+] as const;
 export type IncidentType = (typeof INCIDENT_TYPES)[number];
 
 export const DELIVERY_SHIPMENT_STATUSES = [
@@ -57,7 +76,8 @@ export const DELIVERY_SHIPMENT_STATUSES = [
   "FAILED",
   "CANCELLED",
 ] as const;
-export type DeliveryShipmentStatus = (typeof DELIVERY_SHIPMENT_STATUSES)[number];
+export type DeliveryShipmentStatus =
+  (typeof DELIVERY_SHIPMENT_STATUSES)[number];
 
 export interface InboundLine {
   id: string;
@@ -222,7 +242,12 @@ export interface OperationsOverview {
     availableQuantity: number;
     activeReservations: number;
   };
-  fulfillment: { open: number; assigned: number; picking: number; packed: number };
+  fulfillment: {
+    open: number;
+    assigned: number;
+    picking: number;
+    packed: number;
+  };
   delivery: {
     readyForDispatch: number;
     assigned: number;
@@ -286,9 +311,9 @@ export interface DeliveryIncidentRecord {
 }
 
 /**
- * GET /v1/admin/delivery/shipments (AdminDeliveryShipmentDto). Read-only for
- * OPERATIONS -- no assign/update permission is granted to this role, so no
- * mutation input type exists here by design.
+ * GET /v1/admin/delivery/shipments (AdminDeliveryShipmentDto). OPERATIONS
+ * also holds DELIVERY_SHIPMENT_ASSIGN/DELIVERY_SHIPMENT_UPDATE (MKT-P0-002),
+ * so this record backs the assign / out-for-delivery actions too.
  */
 export interface DeliveryShipmentRecord {
   id: string;
@@ -312,6 +337,28 @@ export interface DeliveryShipmentRecord {
   deliveredAt: string | null;
   failedAt: string | null;
   updatedAt: string;
+}
+
+/**
+ * GET /v1/admin/delivery/drivers (AdminDeliveryDriverDto). Used to populate
+ * the eligible-driver picker on the shipment assign action -- activeShipmentsCount
+ * is the existing "is this driver free" signal (no separate availability engine).
+ */
+export interface DeliveryDriverRecord {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  countryId: string;
+  countryCode: string;
+  code: string;
+  displayName: string;
+  phoneMasked: string | null;
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+  activeShipmentsCount: number;
+  lastLatitude: number | null;
+  lastLongitude: number | null;
+  lastAccuracyMeters: number | null;
+  lastLocationAt: string | null;
 }
 
 /**
