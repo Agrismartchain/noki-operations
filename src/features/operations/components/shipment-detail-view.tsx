@@ -205,6 +205,18 @@ export function ShipmentDetailView({
                 label={t("shipping.detail.organization")}
                 value={organizationName ?? "-"}
               />
+              {delivery ? (
+                <DetailItem
+                  label={t("shipping.detail.source")}
+                  value={t(`shipping.detail.sourceDomain.${delivery.sourceDomain}`)}
+                />
+              ) : null}
+              {delivery?.originName ? (
+                <DetailItem
+                  label={t("shipping.detail.origin")}
+                  value={delivery.originName}
+                />
+              ) : null}
               {commerce ? (
                 <DetailItem
                   label={t("shipping.columns.warehouse")}

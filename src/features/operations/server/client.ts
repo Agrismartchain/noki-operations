@@ -11,6 +11,9 @@ import type {
   DeliveryIncidentRecord,
   DeliveryShipmentRecord,
   DeliveryShipmentStatus,
+  FoodOrderDetail,
+  FoodOrderRecord,
+  FoodOrderStatus,
   FulfillmentQualityCheckInput,
   FulfillmentQualityCheckResult,
   FulfillmentTaskDetail,
@@ -90,6 +93,17 @@ export type OpsShipmentsQuery = {
   fulfillmentTaskId?: string;
   search?: string;
   status?: DeliveryShipmentStatus;
+  /** Only meaningful against GET /v1/admin/delivery/shipments (listDeliveryShipments). */
+  sourceDomain?: "COMMERCE" | "FOOD";
+};
+
+export type OpsFoodOrdersQuery = {
+  page?: number;
+  pageSize?: number;
+  status?: FoodOrderStatus;
+  restaurantPartnerId?: string;
+  restaurantEstablishmentId?: string;
+  countryId?: string;
 };
 
 export type OpsDriversQuery = {
@@ -283,7 +297,33 @@ export async function getDeliveryShipment(
     await serverClient(context).GET("/v1/admin/delivery/shipments/{id}", {
       params: { path: { id } },
     }),
-  ) as DeliveryShipmentRecord;
+  ) as unknown as DeliveryShipmentRecord;
+}
+
+// ---- Food orders (FOOD-P0-OPERATIONS-ACCESS: read-only visibility) ----
+
+/** GET /v1/admin/food/orders -- AdminFoodController, read-only visibility for OPERATIONS. */
+export async function listFoodOrders(
+  query: OpsFoodOrdersQuery,
+  context: OpsContext,
+): Promise<PageResult<FoodOrderRecord>> {
+  return unwrapList(
+    await serverClient(context).GET("/v1/admin/food/orders", {
+      params: { query },
+    }),
+  );
+}
+
+/** GET /v1/admin/food/orders/{id} -- includes items, timeline and shipment. */
+export async function getFoodOrder(
+  id: string,
+  context: OpsContext,
+): Promise<FoodOrderDetail> {
+  return unwrapDirect(
+    await serverClient(context).GET("/v1/admin/food/orders/{id}", {
+      params: { path: { id } },
+    }),
+  ) as unknown as FoodOrderDetail;
 }
 
 // ---- Fulfillment tasks (Picking / Packing) ----

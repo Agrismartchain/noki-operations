@@ -39,6 +39,7 @@
     "packing": "Packing",
     "qc": "Quality control",
     "shipping": "Shipping orders",
+    "food": "Food orders",
     "incidents": "Operational incidents"
   },
   "errors": {
@@ -570,6 +571,12 @@
         "actions": "Actions"
       },
       "organization": "Seller / organization",
+      "source": "Source",
+      "sourceDomain": {
+        "COMMERCE": "Marketplace",
+        "FOOD": "Food"
+      },
+      "origin": "Pickup point",
       "destination": "Destination",
       "driverPhone": "Driver phone",
       "codCollected": "COD collected",
@@ -641,6 +648,83 @@
       "createdAt": "Created at",
       "resolvedBy": "Resolved by",
       "resolvedAt": "Resolved at"
+    }
+  },
+  "food": {
+    "list": {
+      "eyebrow": "Food",
+      "title": "Food Orders",
+      "description": "Real list of FoodOrder records with restaurant, establishment, status and linked delivery.",
+      "breadcrumbsLabel": "Breadcrumbs",
+      "sectionLabel": "Food",
+      "statusFilterLabel": "Filter by order status"
+    },
+    "table": {
+      "ariaLabel": "Food orders list"
+    },
+    "columns": {
+      "order": "Order",
+      "establishment": "Establishment",
+      "status": "Status",
+      "delivery": "Delivery",
+      "total": "Total",
+      "items": "Items",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "empty": {
+      "title": "No Food orders",
+      "description": "No FoodOrder matches these criteria."
+    },
+    "noShipment": "No shipment yet",
+    "status": {
+      "ALL": "All",
+      "PLACED": "Placed",
+      "ACCEPTED": "Accepted",
+      "PREPARING": "Preparing",
+      "READY_FOR_PICKUP": "Ready for pickup",
+      "PICKED_UP": "Picked up",
+      "DELIVERING": "Delivering",
+      "DELIVERED": "Delivered",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled"
+    },
+    "paymentMethod": {
+      "COD": "Cash on delivery",
+      "MOBILE_MONEY": "Mobile Money",
+      "ONLINE": "Online"
+    },
+    "paymentStatus": {
+      "PENDING": "Pending",
+      "COLLECTED": "Collected",
+      "PAID": "Paid",
+      "FAILED": "Failed",
+      "REFUNDED": "Refunded"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Order detail",
+        "items": "Items",
+        "shipment": "Delivery",
+        "timeline": "Timeline"
+      },
+      "restaurant": "Restaurant",
+      "customer": "Customer",
+      "customerPhone": "Customer phone",
+      "address": "Address",
+      "notes": "Notes",
+      "cancellationReason": "Cancellation reason",
+      "subtotal": "Subtotal",
+      "deliveryFee": "Delivery fee",
+      "discount": "Discount",
+      "paymentMethod": "Payment method",
+      "paymentStatus": "Payment status",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "viewShipment": "View shipment"
     }
   }
 }

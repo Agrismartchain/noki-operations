@@ -5,7 +5,7 @@ import { DOMAIN_REGISTRY } from "@/domains/registry";
 import { getShellNavigation, localizeShellHref, SHELL_NAVIGATION } from "./shell-navigation";
 
 describe("shell-navigation", () => {
-  it("derives exactly the ten OPERATIONS navigation items from the domain registry", () => {
+  it("derives exactly the eleven OPERATIONS navigation items from the domain registry", () => {
     expect(SHELL_NAVIGATION.map((item) => item.key)).toEqual([
       "dashboard",
       "inbound",
@@ -16,6 +16,7 @@ describe("shell-navigation", () => {
       "packing",
       "qc",
       "shipping",
+      "food",
       "incidents",
     ]);
   });

@@ -1,6 +1,6 @@
 import type { BadgeTone } from "@agrismartchain/noki-design-system";
 
-import type { DeliveryShipmentStatus, FulfillmentTaskStatus, IncidentStatus, InboundStatus } from "./types";
+import type { DeliveryShipmentStatus, FoodOrderStatus, FulfillmentTaskStatus, IncidentStatus, InboundStatus } from "./types";
 
 export const INBOUND_TONE: Record<InboundStatus, BadgeTone> = {
   DRAFT: "neutral",
@@ -35,5 +35,17 @@ export const DELIVERY_SHIPMENT_TONE: Record<DeliveryShipmentStatus, BadgeTone> =
   OUT_FOR_DELIVERY: "info",
   DELIVERED: "success",
   FAILED: "danger",
+  CANCELLED: "danger",
+};
+
+export const FOOD_ORDER_TONE: Record<FoodOrderStatus, BadgeTone> = {
+  PLACED: "neutral",
+  ACCEPTED: "info",
+  PREPARING: "info",
+  READY_FOR_PICKUP: "warning",
+  PICKED_UP: "warning",
+  DELIVERING: "info",
+  DELIVERED: "success",
+  REJECTED: "danger",
   CANCELLED: "danger",
 };

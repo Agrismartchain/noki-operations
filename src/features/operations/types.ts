@@ -321,8 +321,10 @@ export interface DeliveryShipmentRecord {
   organizationName: string;
   countryId: string;
   countryCode: string;
+  sourceDomain: "COMMERCE" | "FOOD";
   orderId: string | null;
   orderNumber: string;
+  originName: string | null;
   fulfillmentTaskId: string | null;
   assignedDriverProfileId: string | null;
   assignedDriverDisplayName: string | null;
@@ -460,4 +462,122 @@ export interface PageResult<T> {
   page: number;
   pageSize: number;
   summary?: InventorySummary;
+}
+
+/**
+ * GET /v1/admin/food/orders|/{id} (AdminFoodController, admin-food.dto.ts).
+ * FOOD-P0-OPERATIONS-ACCESS read-only visibility -- no order-transition
+ * action is exposed here; that remains the restaurant's own action.
+ */
+export const FOOD_ORDER_STATUSES = [
+  "PLACED",
+  "ACCEPTED",
+  "PREPARING",
+  "READY_FOR_PICKUP",
+  "PICKED_UP",
+  "DELIVERING",
+  "DELIVERED",
+  "REJECTED",
+  "CANCELLED",
+] as const;
+export type FoodOrderStatus = (typeof FOOD_ORDER_STATUSES)[number];
+
+export interface FoodOrderRecord {
+  id: string;
+  orderNumber: string;
+  restaurantPartnerId: string;
+  restaurantBrandName: string;
+  establishmentName: string;
+  status: FoodOrderStatus;
+  itemsCount: number;
+  totalAmount: string;
+  currencyCode: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  deliveryShipmentStatus: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FoodOrderItemModifier {
+  name: string;
+  priceDeltaAmount: string;
+}
+
+export interface FoodOrderItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unitPriceAmount: string;
+  totalPriceAmount: string;
+  modifiers: FoodOrderItemModifier[];
+}
+
+export interface FoodOrderTimelineEntry {
+  type: string;
+  fromStatus: string | null;
+  toStatus: string | null;
+  actorDisplayName: string | null;
+  message: string | null;
+  createdAt: string;
+}
+
+export interface FoodOrderShipment {
+  id: string;
+  status: string;
+  assignedDriverDisplayName: string | null;
+  assignedAt: string | null;
+  deliveredAt: string | null;
+}
+
+export interface FoodOrderDetail extends FoodOrderRecord {
+  subtotalAmount: string;
+  deliveryFeeAmount: string;
+  discountAmount: string;
+  customerFullName: string;
+  customerPhone: string | null;
+  addressLine1: string;
+  addressLine2: string | null;
+  notes: string | null;
+  cancellationReason: string | null;
+  items: FoodOrderItem[];
+  timeline: FoodOrderTimelineEntry[];
+  shipment: FoodOrderShipment | null;
+}
+
+/** GET /v1/admin/food/restaurants/{id} -- restaurant context for an order. */
+export interface FoodRestaurantRecord {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  countryId: string;
+  countryCode: string;
+  code: string;
+  legalName: string;
+  brandName: string;
+  status: string;
+  onboardingStatus: string | null;
+  establishmentsCount: number;
+  ordersCount: number;
+  incidentsOpenCount: number;
+  updatedAt: string;
+}
+
+/**
+ * GET /v1/admin/food/incidents (AdminFoodIncidentDto,
+ * admin-food.dto.ts:641-654) -- quality/complaint visibility.
+ */
+export interface FoodIncidentRecord {
+  id: string;
+  foodOrderId: string | null;
+  orderNumber: string | null;
+  restaurantPartnerId: string | null;
+  restaurantBrandName: string | null;
+  type: string;
+  status: string;
+  comment: string | null;
+  reportedByActorDisplayName: string;
+  resolvedAt: string | null;
+  resolvedByActorDisplayName: string | null;
+  createdAt: string;
 }

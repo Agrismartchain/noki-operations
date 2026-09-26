@@ -53,7 +53,7 @@ describe("AdminSidebar", () => {
     expect(result.props.navigation.map((item) => item.key)).toEqual(["dashboard"]);
   });
 
-  it("shows the full real OPERATIONS role permission set as exactly the ten expected items", async () => {
+  it("shows the full real OPERATIONS role permission set as exactly the eleven expected items", async () => {
     const result = await AdminSidebar({
       actor: {
         ...baseActor,
@@ -65,6 +65,7 @@ describe("AdminSidebar", () => {
           "fulfillment.task.pack",
           "commerce.qc.manage",
           "delivery.admin.read",
+          "food.order.read",
           "incidents.read",
         ],
       },
@@ -81,6 +82,7 @@ describe("AdminSidebar", () => {
       "packing",
       "qc",
       "shipping",
+      "food",
       "incidents",
     ]);
   });

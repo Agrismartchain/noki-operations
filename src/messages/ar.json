@@ -39,6 +39,7 @@
     "packing": "التعبئة",
     "qc": "مراقبة الجودة",
     "shipping": "أوامر الشحن",
+    "food": "طلبات المطاعم",
     "incidents": "الحوادث التشغيلية"
   },
   "errors": {
@@ -570,6 +571,12 @@
         "actions": "الإجراءات"
       },
       "organization": "البائع / المؤسسة",
+      "source": "المصدر",
+      "sourceDomain": {
+        "COMMERCE": "السوق",
+        "FOOD": "المطاعم"
+      },
+      "origin": "نقطة الاستلام",
       "destination": "الوجهة",
       "driverPhone": "هاتف السائق",
       "codCollected": "COD المحصل",
@@ -641,6 +648,83 @@
       "createdAt": "أنشئ في",
       "resolvedBy": "حل بواسطة",
       "resolvedAt": "حل في"
+    }
+  },
+  "food": {
+    "list": {
+      "eyebrow": "المطاعم",
+      "title": "طلبات المطاعم",
+      "description": "قائمة حقيقية لطلبات الطعام مع المطعم والمنشأة والحالة والتوصيل المرتبط.",
+      "breadcrumbsLabel": "مسار التنقل",
+      "sectionLabel": "المطاعم",
+      "statusFilterLabel": "تصفية حسب حالة الطلب"
+    },
+    "table": {
+      "ariaLabel": "قائمة طلبات المطاعم"
+    },
+    "columns": {
+      "order": "الطلب",
+      "establishment": "المنشأة",
+      "status": "الحالة",
+      "delivery": "التوصيل",
+      "total": "الإجمالي",
+      "items": "العناصر",
+      "createdAt": "تاريخ الإنشاء",
+      "actions": "إجراءات"
+    },
+    "actions": {
+      "view": "عرض"
+    },
+    "empty": {
+      "title": "لا توجد طلبات مطاعم",
+      "description": "لا يوجد طلب طعام يطابق هذه المعايير."
+    },
+    "noShipment": "لا يوجد توصيل بعد",
+    "status": {
+      "ALL": "الكل",
+      "PLACED": "تم الطلب",
+      "ACCEPTED": "مقبول",
+      "PREPARING": "قيد التحضير",
+      "READY_FOR_PICKUP": "جاهز للاستلام",
+      "PICKED_UP": "تم الاستلام",
+      "DELIVERING": "قيد التوصيل",
+      "DELIVERED": "تم التوصيل",
+      "REJECTED": "مرفوض",
+      "CANCELLED": "ملغى"
+    },
+    "paymentMethod": {
+      "COD": "الدفع عند الاستلام",
+      "MOBILE_MONEY": "الدفع عبر الهاتف",
+      "ONLINE": "دفع إلكتروني"
+    },
+    "paymentStatus": {
+      "PENDING": "قيد الانتظار",
+      "COLLECTED": "تم التحصيل",
+      "PAID": "مدفوع",
+      "FAILED": "فشل",
+      "REFUNDED": "مسترد"
+    },
+    "detail": {
+      "sections": {
+        "summary": "تفاصيل الطلب",
+        "items": "العناصر",
+        "shipment": "التوصيل",
+        "timeline": "السجل الزمني"
+      },
+      "restaurant": "المطعم",
+      "customer": "العميل",
+      "customerPhone": "هاتف العميل",
+      "address": "العنوان",
+      "notes": "ملاحظات",
+      "cancellationReason": "سبب الإلغاء",
+      "subtotal": "المجموع الفرعي",
+      "deliveryFee": "رسوم التوصيل",
+      "discount": "الخصم",
+      "paymentMethod": "طريقة الدفع",
+      "paymentStatus": "حالة الدفع",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث",
+      "viewShipment": "عرض التوصيل"
     }
   }
 }

@@ -39,6 +39,7 @@
     "packing": "Packing",
     "qc": "Contrôle qualité",
     "shipping": "Shipping Orders",
+    "food": "Commandes Food",
     "incidents": "Incidents opérationnels"
   },
   "errors": {
@@ -570,6 +571,12 @@
         "actions": "Actions"
       },
       "organization": "Vendeur / organisation",
+      "source": "Origine",
+      "sourceDomain": {
+        "COMMERCE": "Marketplace",
+        "FOOD": "Food"
+      },
+      "origin": "Point de retrait",
       "destination": "Destination",
       "driverPhone": "Téléphone conducteur",
       "codCollected": "COD collecté",
@@ -641,6 +648,83 @@
       "createdAt": "Créé le",
       "resolvedBy": "Résolu par",
       "resolvedAt": "Résolu le"
+    }
+  },
+  "food": {
+    "list": {
+      "eyebrow": "Food",
+      "title": "Commandes Food",
+      "description": "Liste réelle des FoodOrder avec restaurant, établissement, statut et livraison associée.",
+      "breadcrumbsLabel": "Fil d'ariane",
+      "sectionLabel": "Food",
+      "statusFilterLabel": "Filtrer par statut commande"
+    },
+    "table": {
+      "ariaLabel": "Liste des commandes Food"
+    },
+    "columns": {
+      "order": "Commande",
+      "establishment": "Établissement",
+      "status": "Statut",
+      "delivery": "Livraison",
+      "total": "Total",
+      "items": "Articles",
+      "createdAt": "Créée le",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "Voir"
+    },
+    "empty": {
+      "title": "Aucune commande Food",
+      "description": "Aucun FoodOrder ne correspond à ces critères."
+    },
+    "noShipment": "Pas encore de livraison",
+    "status": {
+      "ALL": "Tous",
+      "PLACED": "Passée",
+      "ACCEPTED": "Acceptée",
+      "PREPARING": "En préparation",
+      "READY_FOR_PICKUP": "Prête à retirer",
+      "PICKED_UP": "Récupérée",
+      "DELIVERING": "En livraison",
+      "DELIVERED": "Livrée",
+      "REJECTED": "Refusée",
+      "CANCELLED": "Annulée"
+    },
+    "paymentMethod": {
+      "COD": "Paiement à la livraison",
+      "MOBILE_MONEY": "Mobile Money",
+      "ONLINE": "En ligne"
+    },
+    "paymentStatus": {
+      "PENDING": "En attente",
+      "COLLECTED": "Collecté",
+      "PAID": "Payé",
+      "FAILED": "Échoué",
+      "REFUNDED": "Remboursé"
+    },
+    "detail": {
+      "sections": {
+        "summary": "Détail commande",
+        "items": "Articles",
+        "shipment": "Livraison",
+        "timeline": "Historique"
+      },
+      "restaurant": "Restaurant",
+      "customer": "Client",
+      "customerPhone": "Téléphone client",
+      "address": "Adresse",
+      "notes": "Notes",
+      "cancellationReason": "Motif d'annulation",
+      "subtotal": "Sous-total",
+      "deliveryFee": "Frais de livraison",
+      "discount": "Remise",
+      "paymentMethod": "Moyen de paiement",
+      "paymentStatus": "Statut paiement",
+      "createdAt": "Créée le",
+      "updatedAt": "Mise à jour le",
+      "viewShipment": "Voir la livraison"
     }
   }
 }
