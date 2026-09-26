@@ -19,7 +19,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@agrismartchain/noki-design-system": "0.2.0",
+    "@agrismartchain/noki-design-system": "0.2.1",
     "@agrismartchain/noki-shared-contracts": "file:vendor/agrismartchain-noki-shared-contracts-0.73.0.tgz",
     "lucide-react": "1.25.0",
     "next": "16.2.10",
