@@ -22,7 +22,7 @@
     "@agrismartchain/noki-design-system": "0.2.1",
     "@agrismartchain/noki-shared-contracts": "file:vendor/agrismartchain-noki-shared-contracts-0.92.0.tgz",
     "lucide-react": "1.25.0",
-    "next": "16.2.10",
+    "next": "16.3.8",
     "next-intl": "4.13.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
@@ -37,7 +37,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.3",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.3.8",
     "jsdom": "29.1.1",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
