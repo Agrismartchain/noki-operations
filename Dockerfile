@@ -7,6 +7,7 @@ WORKDIR /app
 FROM base AS deps
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 COPY package.json pnpm-lock.yaml .npmrc ./
+COPY vendor ./vendor
 RUN corepack enable pnpm && corepack prepare pnpm@10.23.0 --activate
 RUN --mount=type=secret,id=npm_token \
   NODE_AUTH_TOKEN="$(cat /run/secrets/npm_token)" \
