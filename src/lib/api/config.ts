@@ -11,6 +11,23 @@ function isLocalHostname(hostname: string): boolean {
   return LOCAL_HOSTNAMES.has(hostname);
 }
 
+/**
+ * Single-label service names (no dots) explicitly listed in NOKI_API_INTERNAL_HTTP_HOSTS (e.g. the docker service `noki-api`)
+ * may be reached over plain http: the BFF -> API hop stays on the private container network and never leaves the host. Every
+ * other non-local host keeps the https-in-production rule. Unset (the default) preserves the previous behaviour exactly.
+ */
+function isTrustedInternalHost(hostname: string): boolean {
+  if (hostname.includes(".")) {
+    return false;
+  }
+
+  return (process.env.NOKI_API_INTERNAL_HTTP_HOSTS ?? "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter((entry) => entry.length > 0)
+    .includes(hostname.toLowerCase());
+}
+
 function isProductionEnvironment(): boolean {
   return process.env.NODE_ENV === "production";
 }
@@ -43,7 +60,7 @@ export function validateApiBaseUrl(rawValue: string): string {
     throw new NokiApiConfigError("NOKI_API_BASE_URL must not contain credentials.");
   }
 
-  const local = isLocalHostname(url.hostname);
+  const local = isLocalHostname(url.hostname) || isTrustedInternalHost(url.hostname);
 
   if (url.protocol === "http:" && !local && isProductionEnvironment()) {
     throw new NokiApiConfigError("NOKI_API_BASE_URL must use https in production.");
