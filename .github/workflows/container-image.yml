@@ -33,7 +33,10 @@ jobs:
             echo "The latest tag is forbidden."
             exit 1
           fi
-
+          if [ "${{ inputs.image_tag }}" != "${GITHUB_SHA}" ]; then
+            echo "image_tag must equal the full commit SHA being built (${GITHUB_SHA}) so the OCI revision label, the tag and the release lock agree."
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -103,10 +106,17 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ inputs.image_tag }}
+            org.opencontainers.image.title=noki-operations
+            org.opencontainers.image.licenses=UNLICENSED
           sbom: true
           provenance: true
           secrets: |
             npm_token=${{ secrets.GITHUB_TOKEN }}
 
       - name: Print immutable digest
-        run: echo "Image digest: ${{ steps.push.outputs.digest }}"
+        run: |
+          echo "Image digest: ${{ steps.push.outputs.digest }}"
