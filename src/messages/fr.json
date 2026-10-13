@@ -78,6 +78,57 @@
     },
     "logout": {
       "action": "Se déconnecter"
+    },
+    "mfa": {
+      "verify": {
+        "title": "Vérification en deux étapes",
+        "subtitle": "Confirmez votre identité pour accéder à la console.",
+        "hint": "Saisissez le code à 6 chiffres affiché par votre application d’authentification.",
+        "recoveryHint": "Saisissez l’un de vos codes de récupération. Chaque code ne fonctionne qu’une seule fois.",
+        "codeLabel": "Code d’authentification",
+        "recoveryLabel": "Code de récupération",
+        "submit": "Vérifier",
+        "useRecovery": "Utiliser un code de récupération",
+        "useAuthenticator": "Utiliser mon application d’authentification"
+      },
+      "enroll": {
+        "title": "Sécurisez votre compte",
+        "subtitle": "La double authentification est obligatoire pour les comptes internes.",
+        "requiredTitle": "Configuration requise",
+        "requiredText": "Installez une application d’authentification (Google Authenticator, Microsoft Authenticator, Aegis, 1Password…), puis scannez le code ci-dessous.",
+        "loading": "Préparation de la configuration…",
+        "scan": "1. Scannez ce code avec votre application d’authentification.",
+        "manual": "Impossible de scanner ? Saisissez cette clé manuellement. Elle n’est affichée qu’une seule fois.",
+        "qrAlt": "Code QR de configuration de l’authentification en deux étapes",
+        "codeLabel": "2. Saisissez le code à 6 chiffres affiché",
+        "confirm": "Activer la double authentification",
+        "codesTitle": "Codes de récupération",
+        "codesWarning": "Conservez ces codes dans un endroit sûr. Ils permettent de vous connecter si vous perdez votre téléphone, et ne seront plus jamais affichés.",
+        "download": "Télécharger les codes",
+        "copy": "Copier les codes",
+        "savedConfirm": "J’ai conservé mes codes de récupération en lieu sûr.",
+        "continue": "Continuer",
+        "fileHeader": "NOKI - codes de récupération (chaque code ne fonctionne qu’une seule fois)"
+      },
+      "errors": {
+        "title": "Vérification impossible",
+        "invalidCode": "Ce code n’est pas valide. Vérifiez l’heure de votre téléphone puis réessayez.",
+        "locked": "Trop de tentatives. Réessayez dans quelques minutes.",
+        "expired": "L’étape de connexion a expiré. Veuillez vous reconnecter.",
+        "unexpected": "Une erreur est survenue. Veuillez réessayer."
+      }
+    },
+    "stepUp": {
+      "title": "Confirmation de votre identité requise",
+      "text": "Cette action est sensible. Saisissez le code de votre application d’authentification, puis relancez l’action.",
+      "codeLabel": "Code d’authentification ou code de récupération",
+      "submit": "Confirmer",
+      "doneTitle": "Identité confirmée",
+      "doneText": "Vous pouvez maintenant relancer l’action (la confirmation reste valable quelques minutes).",
+      "errors": {
+        "invalid": "Ce code n’est pas valide.",
+        "locked": "Trop de tentatives. Réessayez dans quelques minutes."
+      }
     }
   },
   "mutations": {

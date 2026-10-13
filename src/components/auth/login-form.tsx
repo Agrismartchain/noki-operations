@@ -18,6 +18,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "@/i18n/navigation";
 
+import { MfaEnrollStep, MfaVerifyStep } from "./mfa-steps";
+
 import styles from "./login-form.module.css";
 
 export interface LoginFormProps {
@@ -36,6 +38,7 @@ const ERROR_MESSAGE_KEYS: Record<string, string> = {
   SERVICE_UNAVAILABLE: "auth.login.errors.serviceUnavailable",
   TIMEOUT: "auth.login.errors.timeout",
   RATE_LIMITED: "auth.login.errors.rateLimited",
+  MFA_EXPIRED: "auth.mfa.errors.expired",
 };
 
 function resolveErrorMessageKey(code: string): string {
@@ -51,6 +54,7 @@ export function LoginForm({ brand, sessionExpired = false }: LoginFormProps) {
   const [pending, setPending] = useState(false);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [mfaStep, setMfaStep] = useState<"VERIFY" | "ENROLL" | null>(null);
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -109,12 +113,52 @@ export function LoginForm({ brand, sessionExpired = false }: LoginFormProps) {
         return;
       }
 
+      const body = (await response.json().catch(() => null)) as { mfa?: "VERIFY" | "ENROLL" } | null;
+      if (body?.mfa === "VERIFY" || body?.mfa === "ENROLL") {
+        setPassword("");
+        setMfaStep(body.mfa);
+        setPending(false);
+        return;
+      }
+
       router.replace("/");
       router.refresh();
     } catch {
       setErrorCode("SERVICE_UNAVAILABLE");
       setPending(false);
     }
+  }
+
+  function finishSignIn() {
+    router.replace("/");
+    router.refresh();
+  }
+
+  function restart() {
+    setMfaStep(null);
+    setPassword("");
+    setErrorCode("MFA_EXPIRED");
+  }
+
+  if (mfaStep) {
+    return (
+      <Card className={styles.card}>
+        <CardHeader>
+          <Stack gap="xs">
+            <span className={styles.eyebrow}>{brand}</span>
+            <CardTitle>{t(mfaStep === "ENROLL" ? "auth.mfa.enroll.title" : "auth.mfa.verify.title")}</CardTitle>
+            <CardDescription>{t(mfaStep === "ENROLL" ? "auth.mfa.enroll.subtitle" : "auth.mfa.verify.subtitle")}</CardDescription>
+          </Stack>
+        </CardHeader>
+        <CardContent>
+          {mfaStep === "ENROLL" ? (
+            <MfaEnrollStep onSuccess={finishSignIn} onRestart={restart} />
+          ) : (
+            <MfaVerifyStep onSuccess={finishSignIn} onRestart={restart} />
+          )}
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

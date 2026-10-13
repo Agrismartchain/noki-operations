@@ -78,6 +78,57 @@
     },
     "logout": {
       "action": "Sign out"
+    },
+    "mfa": {
+      "verify": {
+        "title": "Two-step verification",
+        "subtitle": "Confirm your identity to open the console.",
+        "hint": "Enter the 6-digit code shown by your authenticator app.",
+        "recoveryHint": "Enter one of your recovery codes. Each code works only once.",
+        "codeLabel": "Authentication code",
+        "recoveryLabel": "Recovery code",
+        "submit": "Verify",
+        "useRecovery": "Use a recovery code",
+        "useAuthenticator": "Use my authenticator app"
+      },
+      "enroll": {
+        "title": "Secure your account",
+        "subtitle": "Two-factor authentication is mandatory for internal accounts.",
+        "requiredTitle": "Setup required",
+        "requiredText": "Install an authenticator app (Google Authenticator, Microsoft Authenticator, Aegis, 1Password…), then scan the code below.",
+        "loading": "Preparing setup…",
+        "scan": "1. Scan this code with your authenticator app.",
+        "manual": "Cannot scan? Enter this key manually. It is shown only once.",
+        "qrAlt": "QR code to set up two-factor authentication",
+        "codeLabel": "2. Enter the 6-digit code it shows",
+        "confirm": "Turn on two-factor authentication",
+        "codesTitle": "Recovery codes",
+        "codesWarning": "Keep these codes somewhere safe. They let you sign in if you lose your phone, and they will never be shown again.",
+        "download": "Download codes",
+        "copy": "Copy codes",
+        "savedConfirm": "I have stored my recovery codes safely.",
+        "continue": "Continue",
+        "fileHeader": "NOKI - recovery codes (each code works only once)"
+      },
+      "errors": {
+        "title": "Verification failed",
+        "invalidCode": "That code is not valid. Check your phone’s clock and try again.",
+        "locked": "Too many attempts. Try again in a few minutes.",
+        "expired": "The sign-in step expired. Please sign in again.",
+        "unexpected": "Something went wrong. Please try again."
+      }
+    },
+    "stepUp": {
+      "title": "Identity confirmation required",
+      "text": "This action is sensitive. Enter the code from your authenticator app, then run the action again.",
+      "codeLabel": "Authentication code or recovery code",
+      "submit": "Confirm",
+      "doneTitle": "Identity confirmed",
+      "doneText": "You can now run the action again (the confirmation stays valid for a few minutes).",
+      "errors": {
+        "invalid": "That code is not valid.",
+        "locked": "Too many attempts. Try again in a few minutes."
+      }
     }
   },
   "mutations": {

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
-import { loginWithBackend } from "@/lib/auth/backend";
-import { applyAuthCookies } from "@/lib/auth/cookies";
+import { isMfaChallenge, loginWithBackend } from "@/lib/auth/backend";
+import { applyAuthCookies, applyMfaChallengeCookie } from "@/lib/auth/cookies";
 import { jsonError, mapLoginErrorToResponse, readAcceptLanguage } from "@/lib/auth/http";
 import { isSameOriginRequest } from "@/lib/auth/origin";
 import { MAX_LOGIN_BODY_BYTES, parseLoginBody, readBoundedBody } from "@/lib/auth/request-body";
@@ -42,13 +42,20 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const tokens = await loginWithBackend(credentials, {
+    const result = await loginWithBackend(credentials, {
       locale: readAcceptLanguage(request),
       correlationId,
     });
 
+    if (isMfaChallenge(result)) {
+      // Password step passed but no session exists yet: keep only the short-lived challenge, server-side.
+      const response = NextResponse.json({ ok: true, mfa: result.mfaStatus }, { headers: { "Cache-Control": "no-store" } });
+      applyMfaChallengeCookie(response, result.challengeToken, result.challengeExpiresIn);
+      return response;
+    }
+
     const response = NextResponse.json({ ok: true });
-    applyAuthCookies(response, tokens);
+    applyAuthCookies(response, result);
     return response;
   } catch (error) {
     return mapLoginErrorToResponse(error, correlationId);

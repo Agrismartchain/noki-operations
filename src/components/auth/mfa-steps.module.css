@@ -1,0 +1,68 @@
+.qrFrame {
+  display: flex;
+  justify-content: center;
+  padding: var(--noki-space-2);
+  background: #fff; /* QR codes need a light quiet zone in every theme */
+  border-radius: var(--noki-radius-md, 0.5rem);
+  inline-size: fit-content;
+  margin-inline: auto;
+}
+
+.qrImage {
+  display: block;
+  inline-size: 11rem;
+  block-size: 11rem;
+  image-rendering: pixelated;
+}
+
+.secret {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--noki-font-size-md);
+  letter-spacing: 0.08em;
+  word-break: break-all;
+  user-select: all;
+  padding: var(--noki-space-1) var(--noki-space-2);
+  border: 1px dashed var(--noki-color-semantic-border-default, currentColor);
+  border-radius: var(--noki-radius-sm, 0.375rem);
+}
+
+.codes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--noki-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--noki-font-size-md);
+}
+
+.codes li {
+  padding: var(--noki-space-1) var(--noki-space-2);
+  border: 1px solid var(--noki-color-semantic-border-default, currentColor);
+  border-radius: var(--noki-radius-sm, 0.375rem);
+  text-align: center;
+}
+
+.hint {
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  margin: 0;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--noki-space-1);
+}
+
+.linkButton {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--noki-color-semantic-text-link, inherit);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}

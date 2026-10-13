@@ -48,3 +48,47 @@ export function mapLoginErrorToResponse(error: unknown, correlationId: string): 
 
   return jsonError(500, "UNEXPECTED_ERROR", correlationId);
 }
+
+/**
+ * Maps a second-factor failure to a sanitized code. The API codes below are stable, non-sensitive identifiers; the
+ * raw backend message is never forwarded.
+ */
+export function mapMfaErrorToResponse(error: unknown, correlationId: string): NextResponse {
+  if (error instanceof NokiApiConfigError) {
+    return jsonError(503, "CONFIGURATION_ERROR", correlationId);
+  }
+
+  if (error instanceof NokiApiError) {
+    switch (error.apiCode) {
+      case "MFA_CODE_INVALID":
+        return jsonError(401, "MFA_CODE_INVALID", correlationId);
+      case "MFA_LOCKED":
+        return jsonError(429, "MFA_LOCKED", correlationId);
+      case "MFA_CHALLENGE_INVALID":
+        return jsonError(401, "MFA_CHALLENGE_EXPIRED", correlationId);
+      case "MFA_ALREADY_ENROLLED":
+      case "MFA_ENROLLMENT_NOT_STARTED":
+      case "MFA_CHALLENGE_PURPOSE":
+        return jsonError(409, error.apiCode, correlationId);
+      default:
+        break;
+    }
+    switch (error.kind) {
+      case "rate_limited":
+        return jsonError(429, "RATE_LIMITED", correlationId);
+      case "timeout":
+        return jsonError(504, "TIMEOUT", correlationId);
+      case "network":
+        return jsonError(503, "SERVICE_UNAVAILABLE", correlationId);
+      case "unauthorized":
+        return jsonError(401, "MFA_CODE_INVALID", correlationId);
+      case "bad_request":
+      case "unprocessable":
+        return jsonError(400, "INVALID_REQUEST", correlationId);
+      default:
+        return jsonError(502, "UPSTREAM_ERROR", correlationId);
+    }
+  }
+
+  return jsonError(500, "UNEXPECTED_ERROR", correlationId);
+}

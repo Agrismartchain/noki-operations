@@ -7,6 +7,8 @@ import type { NextResponse } from "next/server";
  */
 export const ACCESS_TOKEN_COOKIE = "noki_ops_access_token";
 export const REFRESH_TOKEN_COOKIE = "noki_ops_refresh_token";
+/** Short-lived proof that the password step passed. It is NOT a session and never grants API access. */
+export const MFA_CHALLENGE_COOKIE = "noki_ops_mfa_challenge";
 
 export interface AuthTokenPair {
   accessToken: string;
@@ -57,4 +59,24 @@ export function applyAuthCookies(response: NextResponse, tokens: AuthTokenPair):
 export function clearAuthCookies(response: NextResponse): void {
   response.cookies.set(buildAccessTokenCookie("", 0));
   response.cookies.set(buildRefreshTokenCookie("", 0));
+}
+/** Scoped to the MFA BFF routes only and SameSite=Strict: the browser never sends it anywhere else. */
+export function buildMfaChallengeCookie(value: string, maxAgeSeconds: number) {
+  return {
+    name: MFA_CHALLENGE_COOKIE,
+    value,
+    httpOnly: true,
+    secure: isProductionEnvironment(),
+    sameSite: "strict" as const,
+    path: "/api/auth/mfa",
+    maxAge: maxAgeSeconds,
+  };
+}
+
+export function applyMfaChallengeCookie(response: NextResponse, token: string, maxAgeSeconds: number): void {
+  response.cookies.set(buildMfaChallengeCookie(token, maxAgeSeconds));
+}
+
+export function clearMfaChallengeCookie(response: NextResponse): void {
+  response.cookies.set(buildMfaChallengeCookie("", 0));
 }

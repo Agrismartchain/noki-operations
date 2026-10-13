@@ -6,6 +6,12 @@ import type { FetchLike } from "@/lib/api/timeout";
 
 export type LoginRequestDto = components["schemas"]["LoginRequestDto"];
 export type AuthTokensResponseDto = components["schemas"]["AuthTokensResponseDto"];
+export type AuthMfaChallengeResponseDto = components["schemas"]["AuthMfaChallengeResponseDto"];
+export type MfaStatusResponseDto = components["schemas"]["MfaStatusResponseDto"];
+export type MfaEnrollmentStartResponseDto = components["schemas"]["MfaEnrollmentStartResponseDto"];
+export type MfaRecoveryCodesResponseDto = components["schemas"]["MfaRecoveryCodesResponseDto"];
+export type MfaEnrollConfirmChallengeResponseDto = components["schemas"]["MfaEnrollConfirmChallengeResponseDto"];
+export type MfaStepUpResponseDto = components["schemas"]["MfaStepUpResponseDto"];
 export type RefreshRequestDto = components["schemas"]["RefreshRequestDto"];
 export type LogoutResponseDto = components["schemas"]["LogoutResponseDto"];
 export type MeResponseDto = components["schemas"]["MeResponseDto"];
@@ -37,14 +43,79 @@ function unwrap<T>(result: OpenApiFetchResult<T>): T {
   return result.data;
 }
 
-/** Calls POST /v1/auth/login (AuthController_login). No cookies involved on the backend side. */
+export type LoginResult = AuthTokensResponseDto | AuthMfaChallengeResponseDto;
+
+export function isMfaChallenge(result: LoginResult): result is AuthMfaChallengeResponseDto {
+  return "mfaStatus" in result;
+}
+
+/**
+ * Calls POST /v1/auth/login (AuthController_login). Privileged (internal staff) accounts get 202 + a challenge
+ * instead of tokens: the second factor must be completed before any session exists.
+ */
 export async function loginWithBackend(
   credentials: LoginRequestDto,
   context: BackendCallContext = {},
-): Promise<AuthTokensResponseDto> {
+): Promise<LoginResult> {
   const { client } = createServerNokiClient(context);
   const result = await client.POST("/v1/auth/login", { body: credentials });
-  return unwrap(result);
+  return unwrap(result) as LoginResult;
+}
+
+/** POST /v1/auth/mfa/challenge/verify - finishes sign-in with a TOTP or recovery code. */
+export async function verifyMfaChallengeWithBackend(
+  input: { challengeToken: string; code?: string; recoveryCode?: string },
+  context: BackendCallContext = {},
+): Promise<AuthTokensResponseDto> {
+  const { client } = createServerNokiClient(context);
+  return unwrap(await client.POST("/v1/auth/mfa/challenge/verify", { body: input }));
+}
+
+/** POST /v1/auth/mfa/challenge/enroll/start - the shared secret is returned exactly once. */
+export async function startMfaChallengeEnrollmentWithBackend(
+  challengeToken: string,
+  context: BackendCallContext = {},
+): Promise<MfaEnrollmentStartResponseDto> {
+  const { client } = createServerNokiClient(context);
+  return unwrap(await client.POST("/v1/auth/mfa/challenge/enroll/start", { body: { challengeToken } }));
+}
+
+/** POST /v1/auth/mfa/challenge/enroll/confirm - activates the factor, returns recovery codes once + the session. */
+export async function confirmMfaChallengeEnrollmentWithBackend(
+  input: { challengeToken: string; code: string },
+  context: BackendCallContext = {},
+): Promise<MfaEnrollConfirmChallengeResponseDto> {
+  const { client } = createServerNokiClient(context);
+  return unwrap(await client.POST("/v1/auth/mfa/challenge/enroll/confirm", { body: input }));
+}
+
+/** GET /v1/auth/mfa/status */
+export async function fetchMfaStatusWithBackend(
+  accessToken: string,
+  context: BackendCallContext = {},
+): Promise<MfaStatusResponseDto> {
+  const { client } = createServerNokiClient({ ...context, accessToken });
+  return unwrap(await client.GET("/v1/auth/mfa/status", {}));
+}
+
+/** POST /v1/auth/mfa/step-up - fresh proof for a bounded window before sensitive actions. */
+export async function stepUpWithBackend(
+  accessToken: string,
+  input: { code?: string; recoveryCode?: string },
+  context: BackendCallContext = {},
+): Promise<MfaStepUpResponseDto> {
+  const { client } = createServerNokiClient({ ...context, accessToken });
+  return unwrap(await client.POST("/v1/auth/mfa/step-up", { body: input }));
+}
+
+/** POST /v1/auth/mfa/recovery-codes/regenerate - invalidates every previous code. */
+export async function regenerateRecoveryCodesWithBackend(
+  accessToken: string,
+  input: { code: string },
+  context: BackendCallContext = {},
+): Promise<MfaRecoveryCodesResponseDto> {
+  const { client } = createServerNokiClient({ ...context, accessToken });
+  return unwrap(await client.POST("/v1/auth/mfa/recovery-codes/regenerate", { body: input }));
 }
 
 /** Calls POST /v1/auth/refresh (AuthController_refresh). Rotates the refresh token; the previous one becomes unusable. */

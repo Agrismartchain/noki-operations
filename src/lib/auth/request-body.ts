@@ -1,4 +1,5 @@
 export const MAX_LOGIN_BODY_BYTES = 4096;
+export const MAX_MFA_BODY_BYTES = 1024;
 const MAX_EMAIL_LENGTH = 320;
 const MAX_PASSWORD_LENGTH = 256;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,4 +52,30 @@ export function parseLoginBody(value: unknown): LoginBody | null {
   }
 
   return { email, password };
+}
+
+export interface MfaProofBody {
+  code?: string;
+  recoveryCode?: string;
+}
+
+/** Accepts exactly one of: a 6-digit authenticator code or a recovery code. Nothing else may be present. */
+export function parseMfaProofBody(value: unknown): MfaProofBody | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+  const keys = Object.keys(value);
+  if (keys.length !== 1 || !(keys[0] === "code" || keys[0] === "recoveryCode")) {
+    return null;
+  }
+  const { code, recoveryCode } = value as Record<string, unknown>;
+  if (keys[0] === "code") {
+    return typeof code === "string" && /^\d{6}$/.test(code) ? { code } : null;
+  }
+  return typeof recoveryCode === "string" && /^[A-Za-z0-9 -]{8,32}$/.test(recoveryCode) ? { recoveryCode } : null;
+}
+
+export function parseMfaCodeOnlyBody(value: unknown): { code: string } | null {
+  const parsed = parseMfaProofBody(value);
+  return parsed?.code ? { code: parsed.code } : null;
 }
