@@ -80,41 +80,121 @@ jobs:
         run: |
           cat > "${RUNNER_TEMP}/ghcr-privacy-probe.sh" <<'PROBE'
           #!/usr/bin/env bash
-          # usage: ghcr-privacy-probe.sh <tag-or-"first"> [expected-digest]
-          set -euo pipefail
+          # usage: ghcr-privacy-probe.sh <tag|first> [expected-digest] [require-attestations 0|1]
+          # Fail-closed. No -f on curl: every HTTP code is captured, printed and judged explicitly.
+          set -uo pipefail
           repo="$(echo "${PACKAGE_OWNER}/${PACKAGE_NAME}" | tr 'A-Z' 'a-z')"
-          ref="${1:?tag}"
-          expected="${2:-}"
+          ref="${1:?tag}"; expected="${2:-}"; require_att="${3:-0}"
+          work="$(mktemp -d)"; trap 'rm -rf "${work}"' EXIT
           accept='application/vnd.oci.image.index.v1+json,application/vnd.oci.image.manifest.v1+json,application/vnd.docker.distribution.manifest.v2+json,application/vnd.docker.distribution.manifest.list.v2+json'
-          tok() { curl -fsS "$@" "https://ghcr.io/token?service=ghcr.io&scope=repository:${repo}:pull" | jq -r '.token'; }
-          auth_token="$(tok -u "${GITHUB_ACTOR}:${GH_TOKEN}")"
-          anon_token="$(tok)"
+          tokurl="https://ghcr.io/token?service=ghcr.io&scope=repository:${repo}:pull"
+          CODE=000
+          fail() { echo "::error::$*"; exit 1; }
+          req() { # req <name> <curl args...> -> CODE, ${work}/<name>.{body,hdr}
+            local n="$1"; shift
+            CODE="$(curl -sS --max-time 30 -o "${work}/${n}.body" -D "${work}/${n}.hdr" -w '%{http_code}' "$@" 2>"${work}/${n}.err")" || CODE=000
+          }
+          hdr() { tr -d '\r' < "${work}/$1.hdr" | awk -F': ' -v k="$2" 'tolower($1)==k{print $2; exit}'; }
+          errcode() { jq -r '[.errors[]?.code] | join(",")' "${work}/$1.body" 2>/dev/null; }
+          echo "package=ghcr.io/${repo} requested_ref=${ref}"
+
+          # 1. authenticated token exchange (workflow GITHUB_TOKEN only)
+          req auth_tok -u "${GITHUB_ACTOR}:${GH_TOKEN}" "${tokurl}"
+          echo "AUTH_TOKEN_EXCHANGE_HTTP=${CODE}"
+          if [ "${CODE}" != "200" ]; then
+            echo "auth token exchange error codes: $(errcode auth_tok)"
+            fail "Authenticated token exchange refused (HTTP ${CODE}). STOP: the workflow token cannot read this package; verify the package's 'Manage Actions access' manually."
+          fi
+          auth_bearer="$(jq -r '.token // empty' "${work}/auth_tok.body")"
+          [ -n "${auth_bearer}" ] || fail "Authenticated token exchange returned no token."
+          echo "::add-mask::${auth_bearer}"
+
+          # 2. anonymous token exchange: 401/403 is the expected denial for a private package, 200 is inspected below
+          req anon_tok "${tokurl}"
+          echo "ANON_TOKEN_EXCHANGE_HTTP=${CODE} codes=$(errcode anon_tok)"
+          anon_tok_code="${CODE}"; anon_bearer=""
+          case "${anon_tok_code}" in
+            200) anon_bearer="$(jq -r '.token // empty' "${work}/anon_tok.body")"
+                 [ -z "${anon_bearer}" ] || echo "::add-mask::${anon_bearer}" ;;
+            401|403) case "$(errcode anon_tok)" in *UNAUTHORIZED*|*DENIED*|*FORBIDDEN*) ;; *) fail "Anonymous token exchange ${anon_tok_code} without a recognised registry error code (ambiguous)." ;; esac ;;
+            *) fail "Anonymous token exchange returned HTTP ${anon_tok_code} (ambiguous or transport error)." ;;
+          esac
+
+          # 3. resolve the reference (authenticated)
           if [ "${ref}" = "first" ]; then
-            ref="$(curl -fsS -H "Authorization: Bearer ${auth_token}" "https://ghcr.io/v2/${repo}/tags/list" | jq -r '.tags[0] // empty')"
-            [ -n "${ref}" ] || { echo "::error::Authenticated tag list is empty or unreadable: package missing or not accessible to GITHUB_TOKEN."; exit 1; }
+            req tags -H "Authorization: Bearer ${auth_bearer}" "https://ghcr.io/v2/${repo}/tags/list"
+            echo "AUTH_TAGS_HTTP=${CODE}"
+            [ "${CODE}" = "200" ] || fail "Authenticated tag list failed (HTTP ${CODE}): package missing or not readable by the workflow token."
+            ref="$(jq -r '[.tags[]? | select(startswith("sha256-") | not)][0] // empty' "${work}/tags.body")"
+            [ -n "${ref}" ] || fail "Authenticated tag list is empty: no published tag to probe."
+            echo "probed_tag=${ref}"
           fi
-          url="https://ghcr.io/v2/${repo}/manifests/${ref}"
-          hdr="$(mktemp)"
-          auth_code="$(curl -sS -o /dev/null -D "${hdr}" -w '%{http_code}' -H "Accept: ${accept}" -H "Authorization: Bearer ${auth_token}" "${url}")"
-          digest="$(tr -d '\r' < "${hdr}" | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')"
-          anon_code="$(curl -sS -o /dev/null -w '%{http_code}' -H "Accept: ${accept}" -H "Authorization: Bearer ${anon_token}" "${url}")"
-          anon_nobearer="$(curl -sS -o /dev/null -w '%{http_code}' -H "Accept: ${accept}" "${url}")"
-          echo "package=${repo} ref=${ref}"
-          echo "authenticated_manifest_http=${auth_code} digest=${digest}"
-          echo "anonymous_manifest_http=${anon_code} (no-bearer=${anon_nobearer})"
-          if [ "${auth_code}" != "200" ]; then
-            echo "::error::Authenticated read failed (${auth_code}); cannot establish that the package exists, so privacy is unproven."
-            exit 1
-          fi
-          if [ "${anon_code}" = "200" ] || [ "${anon_nobearer}" = "200" ]; then
-            echo "::error::Package is anonymously readable (public). Refusing."
-            exit 1
-          fi
+
+          # 4. authenticated manifest read must be 200 before anything is concluded about privacy
+          murl() { echo "https://ghcr.io/v2/${repo}/manifests/$1"; }
+          req auth_man -H "Accept: ${accept}" -H "Authorization: Bearer ${auth_bearer}" "$(murl "${ref}")"
+          echo "AUTH_MANIFEST_HTTP=${CODE}"
+          [ "${CODE}" = "200" ] || fail "Authenticated manifest read failed (HTTP ${CODE}); privacy is unproven."
+          digest="$(hdr auth_man docker-content-digest)"
+          mtype="$(jq -r '.mediaType // empty' "${work}/auth_man.body")"
+          echo "registry_digest=${digest} mediaType=${mtype}"
+          [ -n "${digest}" ] || fail "Registry returned no Docker-Content-Digest."
           if [ -n "${expected}" ] && [ "${digest}" != "${expected}" ]; then
-            echo "::error::Registry digest ${digest} != pushed digest ${expected}."
-            exit 1
+            fail "Registry digest ${digest} != published digest ${expected}."
           fi
-          echo "PRIVATE_PROOF: readable with workflow token (200), refused anonymously (${anon_code})."
+
+          # 5. OCI index / attestation manifests
+          att_digest=""; att_count=0
+          case "${mtype}" in
+            *image.index*|*manifest.list*)
+              n="$(jq '.manifests | length' "${work}/auth_man.body")"
+              att_count="$(jq '[.manifests[] | select(.annotations["vnd.docker.reference.type"]=="attestation-manifest")] | length' "${work}/auth_man.body")"
+              att_digest="$(jq -r '[.manifests[] | select(.annotations["vnd.docker.reference.type"]=="attestation-manifest")][0].digest // empty' "${work}/auth_man.body")"
+              echo "index manifests=${n} attestation_manifests=${att_count}" ;;
+            *) echo "single manifest (not an index)" ;;
+          esac
+          if [ "${require_att}" = "1" ] && [ "${att_count}" -lt 1 ]; then
+            fail "No attestation manifest (SBOM/provenance) found in the published index."
+          fi
+
+          # 6. anonymous reads of the SAME package/manifest (and the attestation child)
+          anon_check() { # <label> <manifest-ref>
+            local label="$1" mref="$2"
+            req auth_chk -H "Accept: ${accept}" -H "Authorization: Bearer ${auth_bearer}" "$(murl "${mref}")"
+            [ "${CODE}" = "200" ] || fail "[${label}] authenticated read of ${mref} failed (HTTP ${CODE})."
+            req nb -H "Accept: ${accept}" "$(murl "${mref}")"
+            local nb="${CODE}" ab="n/a"
+            echo "ANON_MANIFEST_HTTP[${label}] no-bearer=${nb}"
+            case "${nb}" in
+              200) fail "[${label}] anonymously readable without credentials: package is PUBLIC." ;;
+              401) hdr nb www-authenticate | grep -q "repository:${repo}:" \
+                     || fail "[${label}] 401 challenge does not reference repository:${repo} (not tied to this package)." ;;
+              *) fail "[${label}] anonymous no-bearer read returned HTTP ${nb} (ambiguous)." ;;
+            esac
+            if [ -n "${anon_bearer}" ]; then
+              req ab -H "Accept: ${accept}" -H "Authorization: Bearer ${anon_bearer}" "$(murl "${mref}")"
+              ab="${CODE}"
+              echo "ANON_MANIFEST_HTTP[${label}] anon-bearer=${ab} codes=$(errcode ab)"
+              case "${ab}" in
+                200) fail "[${label}] readable with an anonymous bearer: package is PUBLIC." ;;
+                401|403) case "$(errcode ab)" in *UNAUTHORIZED*|*DENIED*|*FORBIDDEN*) ;; *) fail "[${label}] anonymous denial without a registry error code (ambiguous)." ;; esac ;;
+                *) fail "[${label}] anonymous-bearer read returned HTTP ${ab} (ambiguous)." ;;
+              esac
+            else
+              echo "[${label}] no anonymous bearer was issued (token exchange ${anon_tok_code}): denial established at the token service for repository:${repo}:pull"
+            fi
+          }
+          anon_check "ref" "${ref}"
+          [ -z "${att_digest}" ] || anon_check "attestation" "${att_digest}"
+
+          echo "PRIVATE_PROOF=OK authenticated_manifest=200 anon_token=${anon_tok_code} anon_manifest_no_bearer=401(scoped to repository:${repo}) digest=${digest}"
+          {
+            echo "### GHCR privacy probe (${GITHUB_JOB:-job})"
+            echo "- package: \`ghcr.io/${repo}\` ref: \`${ref}\`"
+            echo "- digest: \`${digest}\` attestations: ${att_count}"
+            echo "- auth token exchange 200, anonymous token exchange ${anon_tok_code}, authenticated manifest 200"
+            echo "- result: PRIVATE_PROOF=OK"
+          } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
           PROBE
           chmod +x "${RUNNER_TEMP}/ghcr-privacy-probe.sh"
 
@@ -162,7 +242,7 @@ jobs:
       - name: Verify GHCR package is still private and digest matches (post-push)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh '${{ inputs.image_tag }}' '${{ steps.push.outputs.digest }}'"
+        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh '${{ inputs.image_tag }}' '${{ steps.push.outputs.digest }}' 1"
 
       - name: Print immutable digest
         run: |
