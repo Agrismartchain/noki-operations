@@ -61,16 +61,6 @@ jobs:
           NOKI_API_BASE_URL: https://api-staging.noki-services.com
         run: pnpm check
 
-      - name: Verify target GHCR package is private
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          visibility="$(gh api "/users/${PACKAGE_OWNER}/packages/container/${PACKAGE_NAME}" --jq '.visibility')"
-          if [ "${visibility}" != "private" ]; then
-            echo "Container package ${PACKAGE_NAME} must already exist and be private before push."
-            exit 1
-          fi
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -80,6 +70,58 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # The packages REST API does not accept GITHUB_TOKEN and /orgs/... 404s for
+      # personal accounts, so privacy is proven at the registry instead:
+      # the package must be readable with the workflow token (it exists and is
+      # linked to this repo) AND refused to an anonymous client. A bare 401/404
+      # is never treated as proof: the authenticated read must succeed first.
+      - name: Write GHCR privacy probe
+        run: |
+          cat > "${RUNNER_TEMP}/ghcr-privacy-probe.sh" <<'PROBE'
+          #!/usr/bin/env bash
+          # usage: ghcr-privacy-probe.sh <tag-or-"first"> [expected-digest]
+          set -euo pipefail
+          repo="$(echo "${PACKAGE_OWNER}/${PACKAGE_NAME}" | tr 'A-Z' 'a-z')"
+          ref="${1:?tag}"
+          expected="${2:-}"
+          accept='application/vnd.oci.image.index.v1+json,application/vnd.oci.image.manifest.v1+json,application/vnd.docker.distribution.manifest.v2+json,application/vnd.docker.distribution.manifest.list.v2+json'
+          tok() { curl -fsS "$@" "https://ghcr.io/token?service=ghcr.io&scope=repository:${repo}:pull" | jq -r '.token'; }
+          auth_token="$(tok -u "${GITHUB_ACTOR}:${GH_TOKEN}")"
+          anon_token="$(tok)"
+          if [ "${ref}" = "first" ]; then
+            ref="$(curl -fsS -H "Authorization: Bearer ${auth_token}" "https://ghcr.io/v2/${repo}/tags/list" | jq -r '.tags[0] // empty')"
+            [ -n "${ref}" ] || { echo "::error::Authenticated tag list is empty or unreadable: package missing or not accessible to GITHUB_TOKEN."; exit 1; }
+          fi
+          url="https://ghcr.io/v2/${repo}/manifests/${ref}"
+          hdr="$(mktemp)"
+          auth_code="$(curl -sS -o /dev/null -D "${hdr}" -w '%{http_code}' -H "Accept: ${accept}" -H "Authorization: Bearer ${auth_token}" "${url}")"
+          digest="$(tr -d '\r' < "${hdr}" | awk -F': ' 'tolower($1)=="docker-content-digest"{print $2}')"
+          anon_code="$(curl -sS -o /dev/null -w '%{http_code}' -H "Accept: ${accept}" -H "Authorization: Bearer ${anon_token}" "${url}")"
+          anon_nobearer="$(curl -sS -o /dev/null -w '%{http_code}' -H "Accept: ${accept}" "${url}")"
+          echo "package=${repo} ref=${ref}"
+          echo "authenticated_manifest_http=${auth_code} digest=${digest}"
+          echo "anonymous_manifest_http=${anon_code} (no-bearer=${anon_nobearer})"
+          if [ "${auth_code}" != "200" ]; then
+            echo "::error::Authenticated read failed (${auth_code}); cannot establish that the package exists, so privacy is unproven."
+            exit 1
+          fi
+          if [ "${anon_code}" = "200" ] || [ "${anon_nobearer}" = "200" ]; then
+            echo "::error::Package is anonymously readable (public). Refusing."
+            exit 1
+          fi
+          if [ -n "${expected}" ] && [ "${digest}" != "${expected}" ]; then
+            echo "::error::Registry digest ${digest} != pushed digest ${expected}."
+            exit 1
+          fi
+          echo "PRIVATE_PROOF: readable with workflow token (200), refused anonymously (${anon_code})."
+          PROBE
+          chmod +x "${RUNNER_TEMP}/ghcr-privacy-probe.sh"
+
+      - name: Verify target GHCR package is private (pre-push)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh first"
 
       - name: Build image for scanning
         uses: docker/build-push-action@v6
@@ -116,6 +158,11 @@ jobs:
           provenance: true
           secrets: |
             npm_token=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify GHCR package is still private and digest matches (post-push)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh '${{ inputs.image_tag }}' '${{ steps.push.outputs.digest }}'"
 
       - name: Print immutable digest
         run: |
