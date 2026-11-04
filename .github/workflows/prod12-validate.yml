@@ -1,11 +1,11 @@
-name: PROD-12 validation (throwaway, never merge, never pushes images)
+name: PROD-12B distroless validation (throwaway, never merge, never pushes images)
 
 on:
   push:
-    branches: ["tmp/prod-12-validate"]
+    branches: ["tmp/prod-12b-validate"]
 
 permissions:
-  contents: write
+  contents: read
   packages: read
 
 env:
@@ -15,53 +15,16 @@ env:
   NEXT_TELEMETRY_DISABLED: "1"
 
 jobs:
-  lock:
-    name: Regenerate lockfile on the fix branch
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: security/prod-12-remediation
-      - uses: pnpm/action-setup@v4
-        with: { version: "${{ env.PNPM_VERSION }}" }
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          registry-url: https://npm.pkg.github.com
-          scope: "@agrismartchain"
-      - name: pnpm install (controlled lockfile update)
-        run: pnpm install --no-frozen-lockfile
-      - name: Lockfile diff summary
-        run: |
-          git diff --stat -- pnpm-lock.yaml package.json
-          echo "--- direct importer changes:"; git diff -U0 pnpm-lock.yaml | grep -E "^[+-]  +(version|specifier):" | head -20
-      - name: Commit lockfile to the fix branch
-        run: |
-          if git diff --quiet -- pnpm-lock.yaml; then echo "lockfile unchanged"; exit 0; fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "chore(deps): refresh pnpm-lock.yaml for next 16.4.5 / eslint-config-next 16.4.5"
-          git push origin HEAD:security/prod-12-remediation
-
   scan:
-    name: ${{ matrix.label }}
-    needs: lock
-    if: ${{ always() && needs.lock.result == 'success' }}
+    name: DISTROLESS variant
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { label: "BEFORE (6c1c735)", ref: "6c1c7359f1a3ec2ebaec5fba8852c6c6d6b1690d", after: "false" }
-          - { label: "AFTER (fix branch)", ref: "security/prod-12-remediation", after: "true" }
     steps:
       - name: Checkout helper scripts
         uses: actions/checkout@v4
       - name: Checkout target
         uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.ref }}
+          ref: security/prod-12b-distroless
           path: target
           persist-credentials: false
       - run: git -C target log --oneline -1
@@ -73,7 +36,6 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: "@agrismartchain"
       - name: Frozen install + lint + typecheck + tests + build (after only)
-        if: ${{ matrix.after == 'true' }}
         working-directory: target
         env:
           NOKI_API_BASE_URL: https://api-staging.noki-services.com
@@ -95,13 +57,18 @@ jobs:
           tags: noki-ops:test
           secrets: |
             npm_token=${{ secrets.GITHUB_TOKEN }}
-      - name: Image facts
+      - name: Image facts (no shell in image)
         run: |
-          docker image inspect noki-ops:test --format 'user={{.Config.User}} healthcheck={{json .Config.Healthcheck}}'
-          docker run --rm --entrypoint node noki-ops:test -v
-          docker run --rm --entrypoint sh noki-ops:test -c 'cat /etc/os-release | head -2; for b in npm npx corepack yarn; do command -v $b >/dev/null && echo "$b PRESENT" || echo "$b absent"; done; ls /usr/local/lib/node_modules 2>/dev/null || echo "no global node_modules"' || true
+          docker image inspect noki-ops:test --format 'user={{.Config.User}} entrypoint={{json .Config.Entrypoint}} cmd={{json .Config.Cmd}} healthcheck={{json .Config.Healthcheck}}'
+          docker run --rm noki-ops:test -v
+          docker run --rm noki-ops:test -e "console.log('uid',process.getuid(),'gid',process.getgid(),'node',process.version,'openssl',process.versions.openssl)"
+          echo "--- shell must be absent"; docker run --rm --entrypoint /bin/sh noki-ops:test -c true && echo "SHELL PRESENT" || echo "no shell (expected)"
+          for b in npm npx corepack yarn; do docker run --rm --entrypoint "/usr/local/bin/$b" noki-ops:test >/dev/null 2>&1 && echo "$b PRESENT" || echo "$b absent"; done
+          echo "--- HTTPS from runtime (CA bundle)"
+          docker run --rm noki-ops:test -e "fetch('https://github.com').then(r=>console.log('HTTPS github.com status',r.status)).catch(e=>{console.log('HTTPS FAIL',e.cause&&e.cause.code||e.message);process.exit(1)})"
+          echo "--- native modules (sharp) if bundled"
+          docker run --rm -w /app noki-ops:test -e "let ok=false;try{const s=require('sharp');console.log('sharp',s.versions&&s.versions.sharp);ok=true}catch(e){console.log('sharp not loadable/bundled:',e.code||e.message)}"
       - name: Container health check (real)
-        if: ${{ matrix.after == 'true' }}
         run: |
           docker run -d --name noki -p 3000:3000 -e NOKI_API_BASE_URL=https://api-staging.noki-services.com noki-ops:test
           for i in $(seq 1 30); do
@@ -111,7 +78,7 @@ jobs:
             sleep 5
           done
           echo "--- GET /api/health"; curl -sS -m 10 -w '\nHTTP %{http_code}\n' http://127.0.0.1:3000/api/health
-          echo "--- process user"; docker exec noki sh -c 'id; ps -o user,pid,args -e 2>/dev/null | head -5' || true
+          echo "--- process user"; docker exec noki /nodejs/bin/node -e "console.log('runtime uid',process.getuid(),'node',process.version)"; docker top noki -eo user,pid,args || true
           docker logs noki 2>&1 | tail -15
           [ "$(docker inspect --format '{{.State.Health.Status}}' noki)" = "healthy" ]
       - name: Trivy scan (JSON, HIGH/CRITICAL, no ignore-unfixed)
@@ -123,9 +90,8 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: "0"
       - name: Classified summary
-        run: python3 .prod12/summarize.py trivy.json "${{ matrix.label }}"
+        run: python3 .prod12/summarize.py trivy.json "DISTROLESS"
       - name: Policy gate (identical settings to container-image.yml)
-        continue-on-error: ${{ matrix.after != 'true' }}
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: noki-ops:test
