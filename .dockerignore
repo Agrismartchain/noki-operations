@@ -8,6 +8,7 @@ playwright-report
 test-results
 screenshots
 *.tgz
+!vendor/*.tgz
 .env
 .env.*
 Dockerfile*
