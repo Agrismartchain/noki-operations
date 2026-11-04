@@ -115,7 +115,7 @@ jobs:
           docker logs noki 2>&1 | tail -15
           [ "$(docker inspect --format '{{.State.Health.Status}}' noki)" = "healthy" ]
       - name: Trivy scan (JSON, HIGH/CRITICAL, no ignore-unfixed)
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: noki-ops:test
           format: json
@@ -126,7 +126,7 @@ jobs:
         run: python3 .prod12/summarize.py trivy.json "${{ matrix.label }}"
       - name: Policy gate (identical settings to container-image.yml)
         continue-on-error: ${{ matrix.after != 'true' }}
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: noki-ops:test
           severity: CRITICAL,HIGH
