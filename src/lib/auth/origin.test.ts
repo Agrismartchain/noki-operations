@@ -12,9 +12,9 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function production(origin: string | undefined = PUBLIC) {
+function production(origin: string | null = PUBLIC) {
   vi.stubEnv("NODE_ENV", "production");
-  if (origin === undefined) {
+  if (origin === null) {
     vi.stubEnv("NOKI_PUBLIC_ORIGIN", "");
     delete process.env.NOKI_PUBLIC_ORIGIN;
   } else {
@@ -83,7 +83,7 @@ describe("isSameOriginRequest in production behind the reverse proxy", () => {
     expect(isSameOriginRequest(post(headers))).toBe(false);
   });
 
-  it.each([undefined, "", "http://operations.noki-services.com", "https://operations.noki-services.com/x", "operations.noki-services.com"])(
+  it.each([null, "", "http://operations.noki-services.com", "https://operations.noki-services.com/x", "operations.noki-services.com"])(
     "fails closed when NOKI_PUBLIC_ORIGIN is %s",
     (value) => {
       production(value);
