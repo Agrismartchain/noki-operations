@@ -1,4 +1,4 @@
-name: GHCR 403 diagnostic (read-only, throwaway)
+name: GHCR probe validation (read-only, throwaway)
 
 on:
   push:
@@ -7,71 +7,47 @@ on:
 permissions:
   contents: read
   packages: write
+  attestations: write
+  id-token: write
 
 env:
-  REPO_LC: agrismartchain/noki-operations
+  PACKAGE_OWNER: Agrismartchain
+  PACKAGE_NAME: noki-operations
 
 jobs:
-  diag:
+  probe:
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@v4
       - name: Log in to GHCR (same as publish workflow)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Raw registry diagnostics
+      - name: Extract the merged probe verbatim from container-image.yml
+        run: |
+          python3 - <<'PY'
+          import yaml,os
+          d=yaml.safe_load(open('.github/workflows/container-image.yml'))
+          st=[s for s in d['jobs']['image']['steps'] if s['name']=='Write GHCR privacy probe'][0]['run']
+          body=st.split("<<'PROBE'\n")[1].split("\nPROBE")[0]+"\n"
+          p=os.path.join(os.environ['RUNNER_TEMP'],'ghcr-privacy-probe.sh')
+          open(p,'w').write(body); os.chmod(p,0o755)
+          PY
+          sha256sum "${RUNNER_TEMP}/ghcr-privacy-probe.sh"
+      - name: Probe, discovery mode (as in pre-push)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACTOR: ${{ github.actor }}
-          OWNER: ${{ github.repository_owner }}
+        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh first"
+      - name: Probe, tag + exact digest (as in post-push, bootstrap has no attestations)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "${RUNNER_TEMP}/ghcr-privacy-probe.sh bootstrap-61f030d4459cc3282b5fd9d814b32569cec9adf8 sha256:370f0710addeec86a2ae5ae5186e14675ee61f0198bf1a134b38b419be4da12c 0"
+      - name: Negative control, wrong digest must fail
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set +e
-          claims() { cut -d. -f2 <<<"$1" | tr '_-' '/+' | awk '{l=length($0)%4; if(l==2)$0=$0"=="; else if(l==3)$0=$0"="; print}' | base64 -d 2>/dev/null | jq -c '{iss,sub,aud,access,exp}' 2>/dev/null || echo "(not a decodable JWT)"; }
-          show() { echo "  -> HTTP $1 body: $(head -c 400 "$2" | tr '\n' ' ')"; }
-          echo "actor=${ACTOR} owner=${OWNER} repo_lc=${REPO_LC}"
-
-          echo "== REST package metadata with GITHUB_TOKEN =="
-          for p in "/users/${OWNER}/packages/container/noki-operations" "/user/packages/container/noki-operations"; do
-            c=$(curl -sS -m 30 -o /tmp/r.b -w '%{http_code}' -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com${p}")
-            echo "GET ${p}"; show "$c" /tmp/r.b
-          done
-          c=$(curl -sS -m 30 -o /tmp/v.b -w '%{http_code}' -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "https://api.github.com/users/${OWNER}/packages/container/noki-operations/versions?per_page=10")
-          echo "GET versions"; show "$c" /tmp/v.b
-          TAGS=$(jq -r '[.[]?.metadata.container.tags[]?] | unique | .[]' /tmp/v.b 2>/dev/null | head -5)
-          echo "candidate tags from REST: $(echo $TAGS)"
-
-          echo "== registry token exchange variants =="
-          for user in "${ACTOR}" "${OWNER}"; do
-            for scope in "repository:${REPO_LC}:pull" "repository:${REPO_LC}:pull,push" "repository:Agrismartchain/noki-operations:pull"; do
-              echo "--- user=${user} scope=${scope}"
-              c=$(curl -sS -m 30 -o /tmp/t.b -D /tmp/t.h -w '%{http_code}' -u "${user}:${GH_TOKEN}" "https://ghcr.io/token?service=ghcr.io&scope=${scope}")
-              echo "token exchange HTTP ${c}"
-              T=$(jq -r '.token // empty' /tmp/t.b)
-              if [ -z "$T" ]; then show "$c" /tmp/t.b; continue; fi
-              echo "::add-mask::${T}"
-              echo "claims: $(claims "$T")"
-              for ep in "/v2/" "/v2/${REPO_LC}/tags/list" "/v2/${REPO_LC}/tags/list?n=10"; do
-                c=$(curl -sS -m 30 -o /tmp/e.b -D /tmp/e.h -w '%{http_code}' -H "Authorization: Bearer ${T}" "https://ghcr.io${ep}")
-                echo "GET ${ep}"; show "$c" /tmp/e.b
-                grep -i '^www-authenticate' /tmp/e.h | tr -d '\r' | sed 's/^/  /'
-              done
-              for tg in $TAGS; do
-                c=$(curl -sS -m 30 -o /tmp/e.b -D /tmp/e.h -w '%{http_code}' -H "Accept: application/vnd.oci.image.index.v1+json,application/vnd.oci.image.manifest.v1+json,application/vnd.docker.distribution.manifest.v2+json" -H "Authorization: Bearer ${T}" "https://ghcr.io/v2/${REPO_LC}/manifests/${tg}")
-                echo "GET manifests/${tg}"; show "$c" /tmp/e.b
-                echo "  digest: $(grep -i '^docker-content-digest' /tmp/e.h | tr -d '\r')"
-              done
-            done
-          done
-
-          echo "== docker CLI (uses docker/login-action credentials) =="
-          for tg in $TAGS; do
-            echo "--- imagetools inspect ${tg}"
-            docker buildx imagetools inspect "ghcr.io/${REPO_LC}:${tg}" 2>&1 | head -12
-            echo "--- docker manifest inspect ${tg}"
-            docker manifest inspect "ghcr.io/${REPO_LC}:${tg}" 2>&1 | head -5
-          done
-          [ -n "$TAGS" ] || echo "no candidate tag discovered; docker checks skipped"
-          exit 0
+          if "${RUNNER_TEMP}/ghcr-privacy-probe.sh" bootstrap-61f030d4459cc3282b5fd9d814b32569cec9adf8 sha256:0000000000000000000000000000000000000000000000000000000000000000 0; then
+            echo "::error::negative control unexpectedly passed"; exit 1
+          else echo "negative control failed as expected"; fi
