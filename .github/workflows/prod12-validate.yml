@@ -1,8 +1,8 @@
-name: PROD-12B distroless validation (throwaway, never merge, never pushes images)
+name: PROD-16 auth-origin validation (throwaway, never merge, never pushes images)
 
 on:
   push:
-    branches: ["tmp/prod-12b-validate"]
+    branches: ["tmp/prod-16-validate"]
 
 permissions:
   contents: read
@@ -16,7 +16,7 @@ env:
 
 jobs:
   scan:
-    name: DISTROLESS variant
+    name: Auth origin fix
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout helper scripts
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout target
         uses: actions/checkout@v4
         with:
-          ref: security/prod-12b-distroless
+          ref: security/prod-16-auth-origin
           path: target
           persist-credentials: false
       - run: git -C target log --oneline -1
@@ -57,43 +57,5 @@ jobs:
           tags: noki-ops:test
           secrets: |
             npm_token=${{ secrets.GITHUB_TOKEN }}
-      - name: Image facts (no shell in image)
-        run: |
-          docker image inspect noki-ops:test --format 'user={{.Config.User}} entrypoint={{json .Config.Entrypoint}} cmd={{json .Config.Cmd}} healthcheck={{json .Config.Healthcheck}}'
-          docker run --rm noki-ops:test -v
-          docker run --rm noki-ops:test -e "console.log('uid',process.getuid(),'gid',process.getgid(),'node',process.version,'openssl',process.versions.openssl)"
-          echo "--- shell must be absent"; docker run --rm --entrypoint /bin/sh noki-ops:test -c true && echo "SHELL PRESENT" || echo "no shell (expected)"
-          for b in npm npx corepack yarn; do docker run --rm --entrypoint "/usr/local/bin/$b" noki-ops:test >/dev/null 2>&1 && echo "$b PRESENT" || echo "$b absent"; done
-          echo "--- HTTPS from runtime (CA bundle)"
-          docker run --rm noki-ops:test -e "fetch('https://github.com').then(r=>console.log('HTTPS github.com status',r.status)).catch(e=>{console.log('HTTPS FAIL',e.cause&&e.cause.code||e.message);process.exit(1)})"
-          echo "--- native modules (sharp) if bundled"
-          docker run --rm -w /app noki-ops:test -e "let ok=false;try{const s=require('sharp');console.log('sharp',s.versions&&s.versions.sharp);ok=true}catch(e){console.log('sharp not loadable/bundled:',e.code||e.message)}"
-      - name: Container health check (real)
-        run: |
-          docker run -d --name noki -p 3000:3000 -e NOKI_API_BASE_URL=https://api-staging.noki-services.com noki-ops:test
-          for i in $(seq 1 30); do
-            s=$(docker inspect --format '{{.State.Health.Status}}' noki); echo "health=$s (t=$((i*5))s)"
-            [ "$s" = "healthy" ] && break
-            [ "$s" = "unhealthy" ] && break
-            sleep 5
-          done
-          echo "--- GET /api/health"; curl -sS -m 10 -w '\nHTTP %{http_code}\n' http://127.0.0.1:3000/api/health
-          echo "--- process user"; docker exec noki /nodejs/bin/node -e "console.log('runtime uid',process.getuid(),'node',process.version)"; docker top noki -eo user,pid,args || true
-          docker logs noki 2>&1 | tail -15
-          [ "$(docker inspect --format '{{.State.Health.Status}}' noki)" = "healthy" ]
-      - name: Trivy scan (JSON, HIGH/CRITICAL, no ignore-unfixed)
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: noki-ops:test
-          format: json
-          output: trivy.json
-          severity: CRITICAL,HIGH
-          exit-code: "0"
-      - name: Classified summary
-        run: python3 .prod12/summarize.py trivy.json "DISTROLESS"
-      - name: Policy gate (identical settings to container-image.yml)
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: noki-ops:test
-          severity: CRITICAL,HIGH
-          exit-code: "1"
+      - name: Real-container reverse-proxy origin test (HTTPS nginx -> app:3000)
+        run: bash .prod16/proxytest.sh
