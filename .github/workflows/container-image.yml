@@ -65,7 +65,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          visibility="$(gh api "/orgs/${PACKAGE_OWNER}/packages/container/${PACKAGE_NAME}" --jq '.visibility')"
+          visibility="$(gh api "/users/${PACKAGE_OWNER}/packages/container/${PACKAGE_NAME}" --jq '.visibility')"
           if [ "${visibility}" != "private" ]; then
             echo "Container package ${PACKAGE_NAME} must already exist and be private before push."
             exit 1
