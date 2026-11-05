@@ -1,0 +1,9 @@
+# Trivy ignore file — read automatically by the "Scan image" step of .github/workflows/container-image.yml (run from the
+# repository root). Every entry MUST carry an expiry (`exp:`) and a pointer to docs/security/trivy-exceptions.md.
+# Only the listed CVE is excepted: CRITICAL/HIGH findings for anything else still fail the scan (severity CRITICAL,HIGH,
+# exit-code 1 are unchanged; no ignore-unfixed, no skipped scan, no base-image downgrade).
+
+# CVE-2026-76844 — Debian zlib1g (heap overflow in gz_write after a failed write(), gz* file API). No fixed version in
+# Debian trixie (fixed only in sid). The vulnerable library is present in the distroless base image but is not loaded by
+# the only executable (node) and no gz* write API is reachable. See docs/security/trivy-exceptions.md. Expires 2026-11-19.
+CVE-2026-76844 exp:2026-11-19

@@ -220,6 +220,88 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: "1"
 
+      - name: Runtime smoke test
+        run: |
+          set -u
+          container_id=""
+          cleanup() {
+            if [ -n "${container_id}" ]; then
+              docker rm -f "${container_id}" >/dev/null 2>&1 || true
+            fi
+          }
+          trap cleanup EXIT
+
+          # NOKI_API_BASE_URL must be https and NOKI_PUBLIC_ORIGIN an exact https origin in production (both validated by
+          # the app); /api/health itself calls neither, so no real endpoint is contacted.
+          container_id="$(docker run -d \
+            -e NODE_ENV=production \
+            -e PORT=3000 \
+            -e HOSTNAME=0.0.0.0 \
+            -e NOKI_API_BASE_URL=https://api-staging.noki-services.com \
+            -e NOKI_PUBLIC_ORIGIN=https://operations.noki-services.com \
+            -p 3000:3000 \
+            "${IMAGE_NAME}:${{ inputs.image_tag }}")"
+
+          echo "Started container ${container_id}"
+
+          ready=""
+          for _ in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:3000/api/health" >/dev/null 2>&1; then
+              ready="1"
+              break
+            fi
+            sleep 1
+          done
+
+          if [ -z "${ready}" ]; then
+            echo "::error::Health endpoint never returned 200."
+            docker logs "${container_id}" || true
+            exit 1
+          fi
+
+          http_status="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:3000/api/health")"
+          if [ "${http_status}" != "200" ]; then
+            echo "::error::Expected HTTP 200 from /api/health, got ${http_status}."
+            exit 1
+          fi
+
+          health_status="none"
+          for _ in $(seq 1 20); do
+            health_status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "${container_id}")"
+            if [ "${health_status}" = "healthy" ]; then
+              break
+            fi
+            sleep 3
+          done
+          if [ "${health_status}" != "healthy" ]; then
+            echo "::error::Docker healthcheck never reported healthy (last status: ${health_status})."
+            docker inspect "${container_id}" | jq '.[0].State.Health'
+            exit 1
+          fi
+
+          runtime_uid="$(docker inspect --format '{{.Config.User}}' "${container_id}")"
+          case "${runtime_uid}" in
+            ""|0|0:*|root|root:*)
+              echo "::error::Container runtime user must not be root, got '${runtime_uid}'."
+              exit 1 ;;
+          esac
+
+          restart_count="$(docker inspect --format '{{.RestartCount}}' "${container_id}")"
+          if [ "${restart_count}" != "0" ]; then
+            echo "::error::Expected restart count 0, got ${restart_count}."
+            exit 1
+          fi
+
+          if docker logs "${container_id}" 2>&1 | grep -Ei "http/1\.1\" 500|unhandled|fatal"; then
+            echo "::error::Found HTTP 500 or fatal errors in container logs."
+            exit 1
+          fi
+
+          docker stop --time 10 "${container_id}"
+          exit_code="$(docker inspect --format '{{.State.ExitCode}}' "${container_id}")"
+          oom_killed="$(docker inspect --format '{{.State.OOMKilled}}' "${container_id}")"
+          echo "Smoke test passed: HTTP 200, healthy, user=${runtime_uid}, restarts=0, stopped via SIGTERM (exit_code=${exit_code}, oom_killed=${oom_killed})."
+
       - name: Push image with SBOM and provenance
         id: push
         uses: docker/build-push-action@v6
