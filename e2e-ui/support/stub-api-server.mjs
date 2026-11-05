@@ -402,6 +402,15 @@ function overridePayload(method, pathname, token, body) {
       summary: { onHand: 202, available: 174, reserved: 28, defective: 3, lowStock: 1 },
     };
   }
+  if (method === "GET" && pathname === "/v1/admin/commerce/shipping") {
+    const sh = (n, status, qc) => ({
+      id: `shipment-local-${n}`, organizationId: "organization-local-1", countryId: "country-local-1", countryCode: "MA", orderId: `order-local-${n}`, orderNumber: `CMD-100${n}`,
+      sellerId: "seller-local-1", sellerName: "NOKI Local Seller", warehouseId: "warehouse-local-1", warehouseName: "Entrepôt Casablanca", customerName: "Client Local", customerPhone: "+212 ******000",
+      destination: "Casablanca", driverId: n === 1 ? null : "driver-local-1", driverName: n === 1 ? null : "Chauffeur Local", driverPhoneMasked: null, codAmount: "250.00", codCollected: null, codStatus: "PENDING",
+      currencyCode: "MAD", fulfillmentStatus: "READY_FOR_DISPATCH", shipmentStatus: status, qcStatus: qc, lastLatitude: null, lastLongitude: null, lastPositionAt: null, assignedAt: null, outForDeliveryAt: null, deliveredAt: null, failedAt: null, updatedAt: now,
+    });
+    return { items: [sh(1, "READY_FOR_DISPATCH", "PASSED"), sh(2, "OUT_FOR_DELIVERY", "PASSED")], page: 1, pageSize: 20, total: 2 };
+  }
   if (method === "GET" && pathname === "/v1/admin/commerce/inventory/movements") {
     const mv = (n, type, qty, ref) => ({
       id: `movement-local-${n}`, date: now, type, organizationId: "organization-local-1", countryId: "country-local-1", countryCode: "MA", sellerId: "seller-local-1",

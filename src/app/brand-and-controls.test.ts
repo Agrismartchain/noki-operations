@@ -94,6 +94,10 @@ describe("control-size contract (Admin layer)", () => {
     expect(globals).toMatch(/\[class\*="_mobileTrigger_"\]:not\(\[data-admin-compact-exempt\]\) \{\s*block-size: var\(--admin-control-height-compact\);\s*inline-size: var\(--admin-control-height-compact\);[^}]*min-inline-size: var\(--admin-control-height-compact\);/);
   });
 
+  it("hides low-priority table columns up to 1279px so end-edge row actions stay in view", () => {
+    expect(globals).toMatch(/@media \(width <= 1279px\) \{\s*\[data-responsive-strategy="priority-columns"\] \[data-priority="low"\] \{\s*display: none;/);
+  });
+
   it("does not modify the shared design system", () => {
     expect(globals).not.toMatch(/--noki-size-control-lg\s*:/);
   });

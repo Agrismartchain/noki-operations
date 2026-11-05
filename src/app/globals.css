@@ -212,3 +212,14 @@ div:has(> input[type="search"][data-rac]:focus-visible) {
   min-inline-size: var(--admin-control-height-compact);
   flex: 0 0 auto;
 }
+
+/*
+ * Operations — tables up to 1279px. The 18.5rem sidebar leaves ~700px of content at 1024px, where the design system still
+ * shows its "low" priority columns (it hides them at <= 1023px): the table then overflows its container and the end-edge
+ * row action ("Voir", "Ajuster") ends up off-screen. Hide the low-priority columns up to 1279px so the actions stay in view.
+ */
+@media (width <= 1279px) {
+  [data-responsive-strategy="priority-columns"] [data-priority="low"] {
+    display: none;
+  }
+}

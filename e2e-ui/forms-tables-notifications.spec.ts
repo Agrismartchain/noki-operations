@@ -27,11 +27,10 @@ for (const combo of COMBOS) {
     expect(head?.height ?? 0).toBeLessThanOrEqual(64);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 
-    // At phone width the shared DataTable (priority-columns) hides the medium-priority "Ajuster" column — identical to the
-    // baseline (verified before the redesign), a design-system responsive behaviour that this lot deliberately leaves alone.
-    if (combo.width < 768) {
-      const visibleForms = await page.locator("main form").evaluateAll((els) => els.filter((el) => el.getBoundingClientRect().height > 0).length);
-      expect(visibleForms, "adjustment forms are collapsed by the shared table at phone width, exactly as in the baseline").toBe(0);
+    // Up to 1279px the adjustment form is offered through a per-row dialog action (covered end-to-end in table-actions.spec.ts):
+    // here we only check that the inline column is replaced by that action, never silently dropped.
+    if (combo.width < 1280) {
+      await expect(page.locator('main button[aria-haspopup="dialog"]').first()).toBeVisible();
       return;
     }
 

@@ -285,7 +285,12 @@
       "typeOut": "Decrease (out)",
       "quantity": "Quantity",
       "reason": "Reason",
-      "submit": "Adjust stock"
+      "submit": "Adjust stock",
+      "open": "Adjust",
+      "openLabel": "Adjust stock for {product}",
+      "dialogTitle": "Adjust stock",
+      "dialogDescription": "{product} ({sku}) — {warehouse}",
+      "close": "Close"
     },
     "empty": {
       "title": "No stock",

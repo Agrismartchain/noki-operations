@@ -285,7 +285,12 @@
       "typeOut": "Diminuer (sortie)",
       "quantity": "Quantité",
       "reason": "Motif",
-      "submit": "Ajuster le stock"
+      "submit": "Ajuster le stock",
+      "open": "Ajuster",
+      "openLabel": "Ajuster le stock de {product}",
+      "dialogTitle": "Ajuster le stock",
+      "dialogDescription": "{product} ({sku}) — {warehouse}",
+      "close": "Fermer"
     },
     "empty": {
       "title": "Aucun stock",

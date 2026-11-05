@@ -285,7 +285,12 @@
       "typeOut": "تخفيض (خروج)",
       "quantity": "الكمية",
       "reason": "السبب",
-      "submit": "تسوية المخزون"
+      "submit": "تسوية المخزون",
+      "open": "تسوية",
+      "openLabel": "تسوية مخزون {product}",
+      "dialogTitle": "تسوية المخزون",
+      "dialogDescription": "{product} ({sku}) — {warehouse}",
+      "close": "إغلاق"
     },
     "empty": {
       "title": "لا يوجد مخزون",
