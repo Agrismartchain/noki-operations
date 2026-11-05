@@ -25,7 +25,10 @@
     "switcherLabel": "Thème"
   },
   "shell": {
-    "openMenu": "Ouvrir le menu"
+    "openMenu": "Ouvrir le menu",
+    "footer": {
+      "copyright": "© {year} NOKI — Tous droits réservés"
+    }
   },
   "navigation": {
     "landmarkLabel": "Navigation principale",
@@ -53,7 +56,13 @@
     "branding": {
       "eyebrow": "NOKI Operations",
       "headline": "Le backoffice entrepôt du réseau NOKI",
-      "subtext": "Réception, inventaire, picking, packing, contrôle qualité et expédition — réservé au personnel interne NOKI autorisé."
+      "subtext": "Réception, inventaire, picking, packing, contrôle qualité et expédition — réservé au personnel interne NOKI autorisé.",
+      "highlights": {
+        "receiving": "Réception, inventaire et mouvements de stock",
+        "fulfillment": "Picking, packing et contrôle qualité",
+        "shipping": "Expédition, incidents et commandes Food"
+      },
+      "logoAlt": "NOKI"
     },
     "login": {
       "welcomeTitle": "Connexion",
@@ -74,7 +83,8 @@
         "timeout": "Le service met trop de temps à répondre. Réessayez.",
         "rateLimited": "Trop de tentatives. Réessayez dans quelques instants.",
         "unexpected": "Une erreur inattendue est survenue."
-      }
+      },
+      "secureNote": "Accès réservé aux équipes NOKI autorisées."
     },
     "logout": {
       "action": "Se déconnecter"

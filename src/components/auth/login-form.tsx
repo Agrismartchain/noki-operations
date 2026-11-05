@@ -218,6 +218,8 @@ export function LoginForm({ brand, sessionExpired = false }: LoginFormProps) {
               </FormActions>
             </Stack>
           </form>
+
+          <p className={styles.note}>{t("auth.login.secureNote")}</p>
         </Stack>
       </CardContent>
     </Card>

@@ -1,7 +1,9 @@
 .card {
   inline-size: 100%;
   max-inline-size: 30rem;
-  padding: var(--noki-space-2);
+  padding: var(--noki-space-4);
+  border-radius: var(--noki-radius-xl, 1rem);
+  box-shadow: var(--noki-shadow-md, 0 12px 40px rgb(16 19 27 / 10%));
 }
 
 .eyebrow {
@@ -9,5 +11,23 @@
   font-weight: 600;
   color: var(--noki-color-semantic-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+}
+
+/* Breathing room between header, fields and the primary action (the stacked controls were touching). */
+.card form > div {
+  gap: var(--noki-space-5);
+}
+
+/* Label ↔ input inside one field stay tight. */
+.card form > div > div {
+  gap: var(--noki-space-2);
+}
+
+.note {
+  margin: var(--noki-space-4) 0 0;
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  line-height: var(--noki-font-line-height-normal);
+  text-align: center;
 }

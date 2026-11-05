@@ -3,6 +3,7 @@
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarNav, SidebarNavItem } from "@agrismartchain/noki-design-system";
 import type { ReactNode } from "react";
 
+import { NokiLogo } from "@/components/brand/noki-logo";
 import { usePathname } from "@/i18n/navigation";
 
 import styles from "./admin-sidebar-view.module.css";
@@ -41,8 +42,13 @@ export function AdminSidebarView({ landmarkLabel, brand, brandScope, navigation,
     <Sidebar aria-label={landmarkLabel} className={styles.sidebar}>
       <SidebarHeader>
         <div className={styles.brand}>
-          <span className={styles.brandName}>{brand}</span>
-          <span className={styles.brandScope}>{brandScope}</span>
+          {/* Decorative: the brand name is rendered as text right beside it. The source artwork is a solid-yellow
+              RGB image (no alpha channel), shown as-is in a rounded tile by NokiLogo — never a simulated transparency. */}
+          <NokiLogo size="md" testId="admin-sidebar-logo" className={styles.brandLogo} />
+          <div className={styles.brandText}>
+            <span className={styles.brandName}>{brand}</span>
+            <span className={styles.brandScope}>{brandScope}</span>
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>

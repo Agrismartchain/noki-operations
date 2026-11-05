@@ -28,3 +28,187 @@ html[data-noki-theme="dashboard-dark"] {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * LOT 01G — Admin-only control sizing (the shared design system is NOT modified).
+ *
+ * In the dashboard themes the design system sets the default ("md") control height to the compact density
+ * token (2.125rem = 34px), which is too thin for touch and for the Admin's dense forms. Override the tokens in
+ * the Admin layer only: 48px for the standard control (md) and 44px minimum for the small one (sm). Values are
+ * in px on purpose: the dashboard themes use a 15px root font size, so `3rem` would only be 45px. Large
+ * controls (lg = 3rem = 45px, unused by the Admin) are untouched, so comfortable buttons are not enlarged twice.
+ *
+ * The attribute selectors below are deliberately more specific than the design system's own
+ * `[data-noki-theme=dashboard-*]` token declarations (same element), so the override wins regardless of
+ * stylesheet order. The third selector also covers the design system's `[data-density=comfortable|compact]`
+ * scopes, which re-declare the md token on their own element (2.5rem / 2.125rem) and would otherwise leave
+ * buttons inside Cards/forms thin. Scoped to the dashboard themes (incl. the login branding panel's theme scope).
+ */
+html[data-noki-theme^="dashboard"],
+[data-noki-theme^="dashboard"][data-noki-theme],
+[data-noki-theme^="dashboard"] [data-density] {
+  --noki-density-control-height-md: 48px;
+  --noki-size-control-sm: 44px;
+}
+
+/*
+ * Toast clearance. The design system's toast stack is `position: fixed` in the bottom-end corner (z-index 800) and
+ * every mutation result adds one toast that stays 5s (and indefinitely while the pointer rests on it). On a page
+ * whose submit buttons sit at the bottom-end of the scroll area (e.g. Access > Security), the third or fourth
+ * consecutive submission left the next button underneath the stack with nothing left to scroll. While at least one
+ * toast is on screen, reserve scroll runway equal to a full stack (3 toasts) so the control can always be scrolled
+ * clear of it. Admin layer only, no design system change.
+ */
+body:has([data-react-aria-top-layer="true"] [role="alert"]) {
+  padding-block-end: 18rem;
+}
+
+/*
+ * LOT 01I — control-size contract for the Admin layer (the shared design system is NOT modified).
+ *
+ * --admin-control-height          standard control (native fields, selects, button-links): 48px
+ * --admin-control-height-compact  minimum for compact interactive controls: 44px
+ * Inside table cells the standard height drops to the compact one so inline-edit rows do not balloon.
+ * Admin CSS modules read these variables (with 48px/44px fallbacks); the rules below are a safety net for controls
+ * that no Admin module styles: raw <button>s, design-system sort/clear/info buttons and class-less native fields.
+ * Design-system-managed inner inputs ([data-rac], e.g. the search field whose wrapper is already 48px) are excluded.
+ */
+:root {
+  --admin-control-height: 48px;
+  --admin-control-height-compact: 44px;
+}
+
+main td,
+main th,
+main [role="cell"],
+main [role="gridcell"],
+main [role="columnheader"] {
+  --admin-control-height: 44px;
+}
+
+main input:not([data-rac], [type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]),
+main select:not([multiple]) {
+  min-block-size: var(--admin-control-height);
+}
+
+/* Raw / Admin-styled buttons: 44px floor. Design-system buttons ([data-rac]) are excluded on purpose: they size
+   themselves from the 48px/44px tokens above, and a floor here would LOWER their 48px minimum (caught by the
+   login-submit e2e). */
+main :is(button, [role="button"]):not([data-rac], [data-admin-compact-exempt]) {
+  min-block-size: var(--admin-control-height-compact);
+}
+
+/* Column-header sort buttons (design system, 30px by default): 44px hit area without growing the header row (the
+   visible text keeps its line height; the extra hit area is absorbed by a negative block margin, mirroring the design
+   system's own padding trick). The selector is more specific than the design system's single-class rule. */
+main th :is(button, [role="button"]):not([data-admin-compact-exempt]) {
+  min-block-size: var(--admin-control-height-compact);
+  margin-block: -14px;
+}
+
+/* Design-system search field: its clear (×) button is 32px inside a 48px wrapper — give it the 44px hit area. */
+main :has(> input[type="search"][data-rac]) > button {
+  min-block-size: var(--admin-control-height-compact);
+  min-inline-size: var(--admin-control-height-compact);
+}
+
+/*
+ * LOT 01I (finalisation) — field border contrast (WCAG 1.4.11, >= 3:1 against the surrounding backgrounds).
+ *
+ * The design system draws every field boundary with --noki-color-semantic-border (1.19–1.26:1 on the Admin surfaces) and
+ * --noki-color-semantic-border-strong on hover (1.3–1.5:1). The border is the only visual indicator of a text field, so
+ * the Admin layer overrides the *field elements only* (the shared tokens, cards, tables and dividers are untouched):
+ *
+ *            idle border          hover border          focus ring          measured idle contrast
+ *   light    rgb(130 135 155)     rgb(92 97 118)        rgb(128 112 0)      3.3–3.6 : 1 (white / page / subtle surface)
+ *   dark     rgb(104 112 140)     rgb(140 148 176)      DS focus (6:1)      3.3–3.9 : 1 (surface / page / subtle surface)
+ *
+ * Kept as the design system defines them: invalid fields (danger border, 3.3–6.5:1), disabled fields (inactive controls
+ * are exempt and stay visibly weaker than enabled ones). The DS focus ring is rgb(169 151 36), only 2.7–2.9:1 on the light
+ * surfaces, so light-theme fields get a darker ring. `[data-admin-field-exempt]` is an opt-out hook; the rules chain separate
+ * :not() calls on purpose (a :not() list counts once) so they outrank the design system's hover rule, specificity (0,4,0). All values are colours only: nothing is directional (RTL-safe).
+ */
+:root {
+  --admin-field-border: rgb(130 135 155);
+  --admin-field-border-hover: rgb(92 97 118);
+  --admin-field-focus: rgb(128 112 0);
+  /* Small error text: the DS danger colour (red-700) is 5.6–6.5:1 on the light surfaces, keep it. */
+  --admin-danger-text: var(--noki-color-semantic-danger);
+}
+
+[data-noki-theme="dashboard-dark"] {
+  --admin-field-border: rgb(104 112 140);
+  --admin-field-border-hover: rgb(140 148 176);
+  --admin-field-focus: var(--noki-color-semantic-focus);
+  /* DS dark danger (red-600) is only 3.3–3.9:1 as small text; red-400 keeps the NOKI red hue at 5.2–6.8:1
+     on the surface, page, subtle and alert surfaces (WCAG 1.4.3, 4.5:1). */
+  --admin-danger-text: rgb(248 113 113);
+}
+
+:is(
+  input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+  select,
+  textarea
+):not(:disabled, [aria-invalid="true"], [data-invalid="true"], [data-admin-field-exempt]) {
+  border-color: var(--admin-field-border);
+}
+
+:is(
+  input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+  select,
+  textarea
+):hover:not(:disabled):not(:read-only):not([aria-invalid="true"]):not([data-invalid="true"]):not([data-admin-field-exempt]) {
+  border-color: var(--admin-field-border-hover);
+}
+
+:is(
+  input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+  select,
+  textarea
+):focus-visible {
+  outline-color: var(--admin-field-focus);
+}
+
+/* Error state stays danger-coloured on hover (the design system's hover rule outranks its own invalid rule and would
+   drop an invalid field back to the 1.3:1 neutral border). Danger on the surfaces: 3.3–6.5:1. */
+:is(
+  input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="range"], [type="color"]),
+  select,
+  textarea
+):is([aria-invalid="true"], [data-invalid="true"]):not(:disabled):not([data-admin-field-exempt]) {
+  border-color: var(--noki-color-semantic-danger);
+}
+
+/* Design-system search field: the bordered box is a wrapper around a borderless inner input. */
+div:has(> input[type="search"][data-rac]) {
+  border-color: var(--admin-field-border);
+}
+
+div:has(> input[type="search"][data-rac]):hover:not([data-admin-field-exempt]) {
+  border-color: var(--admin-field-border-hover);
+}
+
+div:has(> input[type="search"][data-rac]:focus-visible) {
+  outline-color: var(--admin-field-focus);
+}
+
+/*
+ * Small error text (WCAG 1.4.3, >= 4.5:1). Field error messages of the design system all use a class named `_error_<hash>`;
+ * recolour only their *text* (borders, icons and alert tones keep the DS danger colour, so the error state stays NOKI red).
+ * Operations modules that draw their own error text can read --admin-danger-text directly.
+ */
+[class*="_error_"]:not([data-admin-error-exempt]) {
+  color: var(--admin-danger-text);
+}
+
+/*
+ * Operations — mobile navigation trigger. The design system's AppShell draws it at 2.5rem (= 37.5px at the dashboard
+ * themes' 15px root): below the 44px compact minimum. Admin-layer override only (design system untouched).
+ */
+[class*="_mobileTrigger_"]:not([data-admin-compact-exempt]) {
+  block-size: var(--admin-control-height-compact);
+  inline-size: var(--admin-control-height-compact);
+  /* In the mobile top bar (flex row) the trigger would otherwise shrink below 44px when the row is tight. */
+  min-inline-size: var(--admin-control-height-compact);
+  flex: 0 0 auto;
+}

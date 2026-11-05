@@ -1,32 +1,84 @@
+/*
+ * Operations sidebar — NOKI Admin standard (LOT 01H) (design system untouched; overrides live in the Admin layer only).
+ * Hierarchy: dashboard title (brand block) > items (48px, md label, 20px icon). The Operations navigation is flat
+ * (no sections). Text uses the 15px-root dashboard scale.
+ */
 .sidebar {
-  display: flex;
-  flex-direction: column;
+  min-inline-size: 18.5rem;
 }
 
+/* ---------- Dashboard title ---------- */
 .brand {
+  display: flex;
+  align-items: center;
+  gap: var(--noki-space-4);
+  min-inline-size: 0;
+  padding-block-end: var(--noki-space-2);
+}
+
+.brandLogo {
+  inline-size: 5.25rem;
+}
+
+.brandText {
   display: flex;
   flex-direction: column;
   gap: var(--noki-space-1);
+  min-inline-size: 0;
 }
 
 .brandName {
-  font-weight: 700;
-  font-size: var(--noki-font-size-md);
   color: var(--noki-color-semantic-text-primary);
+  font-size: var(--noki-font-size-xl, 1.25rem);
+  font-weight: var(--noki-font-weight-bold);
+  line-height: var(--noki-font-line-height-tight);
 }
 
 .brandScope {
-  font-size: var(--noki-font-size-xs);
   color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  font-weight: var(--noki-font-weight-medium);
+  letter-spacing: 0.08em;
+  line-height: var(--noki-font-line-height-tight);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.navItem {
-  white-space: nowrap;
 }
 
 .footer {
-  font-size: var(--noki-font-size-xs);
   color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  line-height: var(--noki-font-line-height-normal);
+}
+
+/* ---------- Items ---------- */
+.sidebar .navItem {
+  min-inline-size: 0;
+  min-block-size: 48px;
+  padding-inline: var(--noki-space-3);
+  font-size: var(--noki-font-size-md);
+  font-weight: var(--noki-font-weight-medium);
+  color: var(--noki-color-semantic-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.sidebar .navItem * {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.sidebar .navItem svg {
+  inline-size: 20px;
+  block-size: 20px;
+}
+
+/* Active item: the design system's filled yellow state, with a heavier label. */
+.sidebar .navItem[aria-current="page"],
+.sidebar .navItem[data-active="true"] {
+  position: relative;
+  font-weight: var(--noki-font-weight-semibold);
+}
+
+@media (max-width: 1023px) {
+  .sidebar {
+    min-inline-size: 0;
+  }
 }

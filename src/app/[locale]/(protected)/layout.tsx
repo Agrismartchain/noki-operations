@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { AdminShell } from "@/components/shell/admin-shell";
 import { AdminSidebar } from "@/components/shell/admin-sidebar";
 import { AdminTopbar } from "@/components/shell/admin-topbar";
+import { AppFooter } from "@/components/shell/app-footer";
 import { ForbiddenView } from "@/components/auth/forbidden-view";
 import { SessionKeepAlive } from "@/components/auth/session-keepalive";
 import { redirect } from "@/i18n/navigation";
@@ -40,6 +41,7 @@ export default async function ProtectedLayout({ children, params }: ProtectedLay
       sidebar={<AdminSidebar actor={actor} />}
       topbar={<AdminTopbar actor={actor} />}
       mobileNavigationLabel={t("shell.openMenu")}
+      footer={<AppFooter />}
     >
       <SessionKeepAlive />
       {children}

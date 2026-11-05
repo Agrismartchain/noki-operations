@@ -16,6 +16,8 @@
 .rowAction {
   display: inline-flex;
   align-items: center;
+  /* Compact interactive control: 44px minimum hit area (NOKI Admin standard). */
+  min-block-size: var(--admin-control-height-compact, 44px);
   border-radius: var(--noki-radius-control);
   padding-block: var(--noki-space-1);
   padding-inline: var(--noki-space-2);

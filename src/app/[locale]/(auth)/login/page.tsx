@@ -1,10 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { BrandingPanel } from "@/components/auth/branding-panel";
 import { LoginForm } from "@/components/auth/login-form";
-import { AdminShellControls } from "@/components/shell/admin-shell-controls";
-
-import styles from "./page.module.css";
+import { OperationsAuthLayout } from "@/components/auth/operations-auth-layout";
 
 type LoginPageProps = {
   params: Promise<{ locale: string }>;
@@ -18,17 +15,8 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
   const t = await getTranslations();
 
   return (
-    <div className={styles.page}>
-      <BrandingPanel />
-
-      <div className={styles.loginPanel}>
-        <div className={styles.controls}>
-          <AdminShellControls />
-        </div>
-        <main className={styles.content}>
-          <LoginForm brand={t("common.brand")} sessionExpired={reason === "session_expired"} />
-        </main>
-      </div>
-    </div>
+    <OperationsAuthLayout>
+      <LoginForm brand={t("common.brand")} sessionExpired={reason === "session_expired"} />
+    </OperationsAuthLayout>
   );
 }

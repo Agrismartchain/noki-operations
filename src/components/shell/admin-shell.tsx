@@ -9,10 +9,12 @@ interface AdminShellProps {
   sidebar: React.ReactNode;
   topbar: React.ReactNode;
   mobileNavigationLabel: string;
+  /** Global footer, rendered below the page content inside the shell. */
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }
 
-export function AdminShell({ sidebar, topbar, mobileNavigationLabel, children }: AdminShellProps) {
+export function AdminShell({ sidebar, topbar, mobileNavigationLabel, footer, children }: AdminShellProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
@@ -24,7 +26,10 @@ export function AdminShell({ sidebar, topbar, mobileNavigationLabel, children }:
       onMobileSidebarOpenChange={setMobileSidebarOpen}
       mobileNavigationLabel={mobileNavigationLabel}
     >
-      {children}
+      <div className={styles.frame}>
+        <div className={styles.frameBody}>{children}</div>
+        {footer}
+      </div>
     </AppShell>
   );
 }
