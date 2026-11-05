@@ -1,0 +1,228 @@
+.page {
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--noki-color-semantic-background);
+}
+
+/* ---------- Brand / visual panel ---------- */
+.visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--noki-color-semantic-text-primary);
+  background-color: var(--noki-color-semantic-surface);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgb(8 10 16 / 55%) 0%, rgb(8 10 16 / 10%) 38%, rgb(8 10 16 / 78%) 100%);
+  pointer-events: none;
+}
+
+.visualContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--noki-space-8);
+  block-size: 100%;
+  padding-inline: var(--noki-space-6);
+  padding-block: var(--noki-space-6);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--noki-space-4);
+  min-inline-size: 0;
+}
+
+.heroLogo {
+  /* Strong identity on the brand panel: sized by the xl token, never shrunk below 6rem. */
+  min-inline-size: 6rem;
+}
+
+.brandName {
+  color: var(--noki-color-semantic-text-primary);
+  font-size: var(--noki-font-size-md);
+  font-weight: var(--noki-font-weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-4);
+  max-inline-size: 36rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--noki-color-semantic-brand-accent);
+  font-size: var(--noki-font-size-sm);
+  font-weight: var(--noki-font-weight-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.headline {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  font-weight: var(--noki-font-weight-bold);
+  line-height: 1.15;
+}
+
+.subtext {
+  margin: 0;
+  color: rgb(255 255 255 / 78%);
+  font-size: var(--noki-font-size-lg);
+  line-height: 1.5;
+}
+
+.highlights {
+  display: grid;
+  gap: var(--noki-space-3);
+  margin: var(--noki-space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.highlight {
+  display: flex;
+  align-items: center;
+  gap: var(--noki-space-3);
+  color: rgb(255 255 255 / 88%);
+  font-size: var(--noki-font-size-md);
+}
+
+.check {
+  position: relative;
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 50%;
+  background: rgb(253 211 7 / 18%);
+  border: 1px solid rgb(253 211 7 / 55%);
+}
+
+.check::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.3rem;
+  inset-inline-start: 0.52rem;
+  inline-size: 0.35rem;
+  block-size: 0.65rem;
+  border-block-end: 2px solid var(--noki-color-semantic-brand-accent);
+  border-inline-end: 2px solid var(--noki-color-semantic-brand-accent);
+  transform: rotate(45deg);
+}
+
+/* ---------- Form column ---------- */
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline: var(--noki-space-5);
+  padding-block: var(--noki-space-4);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--noki-space-5);
+  padding-inline: var(--noki-space-5);
+  padding-block: var(--noki-space-6);
+}
+
+.footer {
+  padding-inline: var(--noki-space-5);
+  padding-block: var(--noki-space-4);
+}
+
+.footerText {
+  margin: 0;
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  text-align: center;
+}
+
+/* ---------- Stacked layouts (< 1024px): banner above the card ---------- */
+@media (max-width: 1023px) {
+  .visual {
+    min-block-size: 15rem;
+  }
+
+  .visualContent {
+    gap: var(--noki-space-5);
+  }
+
+  .heroLogo {
+    inline-size: 6.5rem;
+  }
+
+  .highlights {
+    display: none;
+  }
+
+  /* Controls sit right under the banner; the card follows without a large empty gap. */
+  .main {
+    justify-content: flex-start;
+    padding-block-start: var(--noki-space-3);
+  }
+}
+
+@media (max-width: 767px) {
+  .visual {
+    min-block-size: 9.5rem;
+  }
+
+  .visualContent {
+    padding-inline: var(--noki-space-4);
+    padding-block: var(--noki-space-4);
+    justify-content: center;
+  }
+
+  .copy {
+    display: none;
+  }
+
+  .heroLogo {
+    inline-size: 5rem;
+    min-inline-size: 0;
+  }
+}
+
+/* ---------- Desktop (>= 1024px): split screen ---------- */
+@media (min-width: 1024px) {
+  .page {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .visualContent {
+    padding-inline: var(--noki-space-10);
+    padding-block: var(--noki-space-10);
+  }
+
+  .main {
+    padding-inline: var(--noki-space-8);
+  }
+}

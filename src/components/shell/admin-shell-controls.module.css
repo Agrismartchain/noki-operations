@@ -15,6 +15,10 @@
   flex-shrink: 0;
 }
 
+.themeToggle button {
+  min-block-size: 44px;
+}
+
 .themeToggle,
 .logoutControl {
   min-inline-size: 0;

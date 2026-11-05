@@ -1,0 +1,13 @@
+.footer {
+  margin-block-start: auto;
+  padding-block: var(--noki-space-5) var(--noki-space-2);
+  border-block-start: 1px solid var(--noki-color-semantic-border-subtle);
+}
+
+.text {
+  margin: 0;
+  color: var(--noki-color-semantic-text-secondary);
+  font-size: var(--noki-font-size-sm);
+  line-height: var(--noki-font-line-height-normal);
+  text-align: center;
+}

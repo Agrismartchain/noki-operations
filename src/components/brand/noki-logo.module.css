@@ -1,0 +1,14 @@
+.logo {
+  display: block;
+  block-size: auto;
+  aspect-ratio: 480 / 384;
+  object-fit: contain;
+  border-radius: var(--noki-radius-lg, 0.75rem);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 18%);
+  flex: none;
+}
+
+.sm { inline-size: 3.75rem; }
+.md { inline-size: 5.5rem; }
+.lg { inline-size: 8rem; }
+.xl { inline-size: 11rem; }

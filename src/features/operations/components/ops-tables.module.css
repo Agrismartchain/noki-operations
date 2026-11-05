@@ -16,6 +16,8 @@
 .rowAction {
   display: inline-flex;
   align-items: center;
+  /* Compact interactive control: 44px minimum hit area (NOKI Admin standard). */
+  min-block-size: var(--admin-control-height-compact, 44px);
   border-radius: var(--noki-radius-control);
   padding-block: var(--noki-space-1);
   padding-inline: var(--noki-space-2);
@@ -83,6 +85,8 @@
 }
 
 .input {
+  /* 48px standard field (44px inside table cells through --admin-control-height); also applies in portalled dialogs. */
+  min-block-size: var(--admin-control-height, 48px);
   border: 1px solid var(--noki-color-semantic-border-subtle);
   border-radius: var(--noki-radius-control);
   padding-block: var(--noki-space-2);
@@ -130,4 +134,15 @@
 .miniTable th {
   color: var(--noki-color-semantic-text-secondary);
   font-weight: 600;
+}
+
+/* Adjustment form hosted in the mobile dialog: vertical, full width. */
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noki-space-4);
+}
+
+.dialogForm .field {
+  inline-size: 100%;
 }

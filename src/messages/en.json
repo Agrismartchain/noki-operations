@@ -25,7 +25,10 @@
     "switcherLabel": "Theme"
   },
   "shell": {
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "footer": {
+      "copyright": "© {year} NOKI — All rights reserved"
+    }
   },
   "navigation": {
     "landmarkLabel": "Main navigation",
@@ -53,7 +56,13 @@
     "branding": {
       "eyebrow": "NOKI Operations",
       "headline": "The NOKI network's warehouse backoffice",
-      "subtext": "Receiving, inventory, picking, packing, quality control and shipping — for authorized NOKI internal staff only."
+      "subtext": "Receiving, inventory, picking, packing, quality control and shipping — for authorized NOKI internal staff only.",
+      "highlights": {
+        "receiving": "Receiving, inventory and stock movements",
+        "fulfillment": "Picking, packing and quality control",
+        "shipping": "Shipping, incidents and Food orders"
+      },
+      "logoAlt": "NOKI"
     },
     "login": {
       "welcomeTitle": "Sign in",
@@ -74,7 +83,8 @@
         "timeout": "The service is taking too long to respond. Please try again.",
         "rateLimited": "Too many attempts. Please try again shortly.",
         "unexpected": "An unexpected error occurred."
-      }
+      },
+      "secureNote": "Access restricted to authorised NOKI teams."
     },
     "logout": {
       "action": "Sign out"
@@ -275,7 +285,12 @@
       "typeOut": "Decrease (out)",
       "quantity": "Quantity",
       "reason": "Reason",
-      "submit": "Adjust stock"
+      "submit": "Adjust stock",
+      "open": "Adjust",
+      "openLabel": "Adjust stock for {product}",
+      "dialogTitle": "Adjust stock",
+      "dialogDescription": "{product} ({sku}) — {warehouse}",
+      "close": "Close"
     },
     "empty": {
       "title": "No stock",

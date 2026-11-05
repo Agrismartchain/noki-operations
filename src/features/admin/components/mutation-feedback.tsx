@@ -90,15 +90,27 @@ export function MutationForm({
   children,
   className,
   labels,
+  onSuccess,
 }: {
   action: StatefulMutationAction;
   children: React.ReactNode | ((state: AdminMutationResult) => React.ReactNode);
   className?: string;
   labels: MutationFeedbackLabels;
+  /** Called once per successful result (e.g. to close the dialog that hosts the form). Behaviour is unchanged when omitted. */
+  onSuccess?: () => void;
 }) {
   const [state, formAction] = useActionState(action, idleMutationResult);
   const router = useRouter();
   const lastRefreshSignature = useRef("");
+  const lastSuccessSignature = useRef("");
+
+  useEffect(() => {
+    if (!onSuccess || state.status !== "success") return;
+    const signature = state.resultId ?? `${state.status}:${state.message ?? ""}:${state.correlationId ?? ""}`;
+    if (signature === lastSuccessSignature.current) return;
+    lastSuccessSignature.current = signature;
+    onSuccess();
+  }, [onSuccess, state]);
 
   useMutationToast(state, labels);
 

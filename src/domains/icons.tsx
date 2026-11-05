@@ -9,6 +9,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Truck,
+  UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
 
@@ -23,5 +24,6 @@ export const DOMAIN_ICONS: Record<string, LucideIcon> = {
   packing: PackagePlus,
   qc: ShieldCheck,
   shipping: Truck,
+  food: UtensilsCrossed,
   incidents: ShieldAlert,
 };

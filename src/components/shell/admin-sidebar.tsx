@@ -18,7 +18,7 @@ function translateNavItem(t: Awaited<ReturnType<typeof getTranslations>>, item: 
     key: item.key,
     href: item.href,
     label: t(item.labelKey),
-    icon: Icon ? createElement(Icon, { size: 18 }) : undefined,
+    icon: Icon ? createElement(Icon, { size: 20 }) : undefined,
   };
 }
 
